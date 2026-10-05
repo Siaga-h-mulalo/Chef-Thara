@@ -1,0 +1,3030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1F1A0E">
+<title>Admin · Chef Thara Bakes</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================================
+   TOKENS
+   ========================================================================= */
+:root{
+  --yellow:#E8B20A;
+  --yellow-dark:#B88A00;
+  --yellow-deep:#8A6600;
+  --yellow-light:#FFE9A8;
+  --yellow-pale:#FFF7E0;
+  --yellow-tint:rgba(232,178,10,.10);
+  --yellow-soft:rgba(232,178,10,.22);
+
+  --ink:#1F1A0E;
+  --muted:#6E6552;
+  --soft:#8A8172;
+  --line:rgba(31,26,14,.09);
+  --line-soft:rgba(31,26,14,.05);
+  --bg:#FBFAF5;
+  --card:#FFFFFF;
+  --ok:#2F6A38;
+  --danger:#B0341A;
+
+  --shadow-sm:0 1px 3px rgba(31,26,14,.04);
+  --shadow:0 6px 24px rgba(31,26,14,.07);
+  --shadow-lg:0 24px 60px rgba(31,26,14,.18);
+
+  --r:12px;
+  --r-lg:16px;
+  --r-xl:22px;
+  --pill:999px;
+
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+
+  --sidebar-w:242px;
+  --topbar-h:64px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none !important}
+
+html,body{height:100%}
+
+body{
+  margin:0;
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.5;
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body.locked{overflow:hidden}
+
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;letter-spacing:-.01em;margin:0;line-height:1.2}
+p{margin:0}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-family:inherit}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+
+/* =========================================================================
+   AUTH GATE
+   ========================================================================= */
+.gate{
+  position:fixed;inset:0;display:grid;place-items:center;padding:24px;
+  background:linear-gradient(140deg,#FFFEFB 0%,#FFF7E0 60%,#FFE9A8 100%);
+  z-index:500;
+}
+.gate-card{
+  width:100%;max-width:420px;background:#fff;border-radius:var(--r-xl);
+  box-shadow:var(--shadow-lg);padding:40px 32px;text-align:center;
+  border:1px solid var(--line-soft);
+}
+.gate-mark{
+  width:52px;height:52px;margin:0 auto 22px;display:grid;place-items:center;
+  border-radius:16px;background:linear-gradient(145deg,#F5C418,#E8B20A);color:#1F1A0E;
+  box-shadow:0 8px 22px rgba(232,178,10,.32);
+}
+.gate-mark svg{width:28px;height:28px}
+.gate h1{font-size:1.6rem;margin-bottom:8px}
+.gate p{color:var(--muted);font-size:.92rem;line-height:1.6;margin-bottom:6px}
+.gate-actions{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+.gate .spinner{
+  width:36px;height:36px;margin:24px auto 0;border-radius:50%;
+  border:3px solid var(--line);border-top-color:var(--yellow);
+  animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* =========================================================================
+   LAYOUT
+   ========================================================================= */
+.app{display:flex;min-height:100vh}
+
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);
+  background:#fff;border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;z-index:40;
+  transform:translateX(-102%);
+  transition:transform .3s cubic-bezier(.2,.7,.3,1);
+}
+.sidebar.open{transform:none;box-shadow:0 0 60px rgba(31,26,14,.14)}
+@media(min-width:900px){
+  .sidebar{transform:none}
+  .sidebar.open{box-shadow:none}
+}
+
+.sidebar-head{
+  padding:20px 20px 18px;border-bottom:1px solid var(--line-soft);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.sidebar-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.sidebar-brand .bm{
+  width:34px;height:34px;flex:none;display:grid;place-items:center;
+  border-radius:11px;background:linear-gradient(145deg,#F5C418,#E8B20A);color:#1F1A0E;
+  box-shadow:0 4px 14px rgba(232,178,10,.28);
+}
+.sidebar-brand .bm svg{width:19px;height:19px}
+.sidebar-brand .bt{min-width:0}
+.sidebar-brand strong{
+  display:block;font-size:.84rem;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.sidebar-brand span{display:block;font-size:.7rem;color:var(--muted);margin-top:1px;letter-spacing:.04em}
+.sidebar-close{
+  display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
+  color:var(--muted);flex:none;
+}
+.sidebar-close:hover{background:var(--line-soft);color:var(--ink)}
+.sidebar-close svg{width:18px;height:18px}
+@media(min-width:900px){.sidebar-close{display:none}}
+
+.sidebar-nav{flex:1;overflow-y:auto;padding:14px 12px}
+.sidebar-nav p.nav-label{
+  font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);padding:10px 12px 8px;margin:0;
+}
+.sidebar-nav button{
+  display:flex;align-items:center;gap:11px;width:100%;
+  padding:11px 13px;border-radius:11px;font-size:.9rem;font-weight:500;
+  color:#3A3230;text-align:left;transition:background .16s, color .16s;
+  margin-bottom:2px;
+}
+.sidebar-nav button:hover{background:var(--yellow-tint);color:var(--yellow-deep)}
+.sidebar-nav button.active{background:var(--yellow);color:#1F1A0E;font-weight:600}
+.sidebar-nav button svg{width:17px;height:17px;flex:none}
+.sidebar-nav .badge-count{
+  margin-left:auto;padding:2px 8px;border-radius:var(--pill);
+  background:var(--yellow);color:#1F1A0E;font-size:.68rem;font-weight:700;
+}
+.sidebar-nav button.active .badge-count{background:rgba(255,255,255,.35)}
+
+.sidebar-foot{
+  padding:14px;border-top:1px solid var(--line-soft);background:#FCFCF9;
+}
+.sidebar-user{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:12px;
+  background:var(--bg);margin-bottom:8px;
+}
+.sidebar-user .av{
+  width:34px;height:34px;flex:none;border-radius:10px;
+  background:var(--yellow-tint);color:var(--yellow-deep);
+  display:grid;place-items:center;font-weight:700;font-size:.82rem;
+}
+.sidebar-user .uinfo{min-width:0;flex:1}
+.sidebar-user .uname{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-user .uemail{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-foot .signout{
+  display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;
+  border-radius:10px;font-size:.85rem;font-weight:500;color:var(--muted);
+  transition:background .16s, color .16s;
+}
+.sidebar-foot .signout:hover{background:var(--yellow-tint);color:var(--yellow-deep)}
+.sidebar-foot .signout svg{width:16px;height:16px}
+
+.main{flex:1;min-width:0;margin-left:0}
+@media(min-width:900px){.main{margin-left:var(--sidebar-w)}}
+
+.topbar{
+  position:sticky;top:0;z-index:30;
+  height:var(--topbar-h);
+  display:flex;align-items:center;gap:12px;
+  padding:0 20px;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.topbar .burger{
+  display:grid;place-items:center;width:38px;height:38px;border-radius:10px;
+  color:var(--ink);flex:none;
+}
+.topbar .burger:hover{background:var(--line-soft)}
+.topbar .burger svg{width:20px;height:20px}
+@media(min-width:900px){.topbar .burger{display:none}}
+
+.topbar-title{flex:1;min-width:0}
+.topbar-title h2{font-size:1.05rem;font-family:var(--sans);font-weight:600;letter-spacing:-.005em}
+.topbar-title p{font-size:.76rem;color:var(--muted);margin-top:1px}
+
+.topbar-actions{display:flex;align-items:center;gap:6px}
+.icon-btn{
+  display:grid;place-items:center;width:38px;height:38px;border-radius:10px;
+  color:var(--muted);transition:background .16s, color .16s;position:relative;
+}
+.icon-btn:hover{background:var(--line-soft);color:var(--ink)}
+.icon-btn svg{width:18px;height:18px}
+.icon-btn.spin svg{animation:spin .9s linear infinite}
+
+.content{padding:24px 20px 80px}
+@media(min-width:900px){.content{padding:28px 32px 60px}}
+
+/* =========================================================================
+   CARDS
+   ========================================================================= */
+.card{
+  background:var(--card);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-sm);
+}
+.card-pad{padding:20px}
+@media(min-width:640px){.card-pad{padding:24px}}
+.card-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding:20px 22px 16px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap;
+}
+.card-head h3{font-family:var(--sans);font-size:1rem;font-weight:600}
+.card-head p{font-size:.8rem;color:var(--muted);margin-top:3px}
+
+/* =========================================================================
+   STATS
+   ========================================================================= */
+.stat-grid{
+  display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));
+  margin-bottom:20px;
+}
+.stat{
+  background:#fff;border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  padding:18px 20px;box-shadow:var(--shadow-sm);
+  position:relative;overflow:hidden;
+}
+.stat .stat-lbl{
+  font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:7px;
+}
+.stat .stat-lbl .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.7}
+.stat .num{
+  font-family:var(--serif);font-size:1.9rem;font-weight:600;line-height:1;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.stat.accent{background:linear-gradient(135deg,#F5C418,#E8B20A);border-color:transparent;box-shadow:0 12px 32px rgba(232,178,10,.30)}
+.stat.accent .stat-lbl{color:rgba(31,26,14,.75)}
+.stat.accent .num{color:#1F1A0E}
+
+.metrics-row{
+  display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));
+  margin-bottom:20px;
+}
+
+/* =========================================================================
+   TABLES
+   ========================================================================= */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.data{width:100%;border-collapse:collapse;font-size:.86rem;min-width:640px}
+table.data th{
+  text-align:left;padding:12px 18px;
+  font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);background:#FBFAF5;border-bottom:1px solid var(--line-soft);
+  white-space:nowrap;
+}
+table.data td{
+  padding:14px 18px;border-bottom:1px solid var(--line-soft);vertical-align:middle;
+}
+table.data tbody tr:last-child td{border-bottom:0}
+table.data tbody tr{transition:background .14s;cursor:pointer}
+table.data tbody tr:hover{background:#FCFCF9}
+table.data tbody tr.no-hover{cursor:default}
+table.data tbody tr.no-hover:hover{background:transparent}
+table.data .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.82rem;font-weight:600;letter-spacing:-.01em}
+
+.cell-main{font-weight:600}
+.cell-sub{font-size:.76rem;color:var(--muted);margin-top:2px}
+
+/* =========================================================================
+   BADGES
+   ========================================================================= */
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 11px;border-radius:var(--pill);
+  font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.badge::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.75}
+.badge-Pending{background:#FFF2C8;color:#8A6A1F}
+.badge-Confirmed{background:#FFF7E0;color:#7A5E20}
+.badge-Preparing{background:#FFE9A8;color:#8A6A1F}
+.badge-Ready{background:#E5F0D8;color:#4A6A18}
+.badge-OutforDelivery{background:#FFE9A8;color:#7A5E20}
+.badge-Completed{background:#E7EDD5;color:#4A5E10}
+.badge-Cancelled{background:#F0E4DC;color:#8A4A2F}
+.badge-available{background:#E7EDD5;color:#4A5E10}
+.badge-unavailable{background:#F0E4DC;color:#8A4A2F}
+.badge-type-info{background:#E3EFFB;color:#1A56B8}
+.badge-type-promo{background:#FFF2C8;color:#8A6A1F}
+.badge-type-urgent{background:#FBE4DA;color:#B0341A}
+.badge-type-success{background:#E7EDD5;color:#4A5E10}
+
+/* =========================================================================
+   BUTTONS
+   ========================================================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;border-radius:var(--pill);
+  font-size:.86rem;font-weight:600;letter-spacing:.005em;
+  border:1px solid transparent;white-space:nowrap;
+  transition:transform .16s, background .16s, color .16s, border-color .16s, box-shadow .16s;
+}
+.btn svg{width:16px;height:16px;flex:none}
+.btn-primary{background:var(--yellow);color:#1F1A0E;box-shadow:0 6px 18px rgba(232,178,10,.28)}
+.btn-primary:hover{background:#F5C418;transform:translateY(-1px)}
+.btn-outline{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn-outline:hover{border-color:var(--yellow-soft);color:var(--yellow-deep)}
+.btn-ghost{background:transparent;color:var(--muted)}
+.btn-ghost:hover{background:var(--line-soft);color:var(--ink)}
+.btn-danger{background:#fff;color:var(--danger);border-color:rgba(176,52,26,.28)}
+.btn-danger:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-sm{padding:7px 14px;font-size:.78rem}
+.btn-xs{padding:5px 11px;font-size:.72rem}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none !important}
+.btn:focus-visible{outline:3px solid var(--yellow-soft);outline-offset:2px}
+
+/* =========================================================================
+   FILTERS
+   ========================================================================= */
+.filters-bar{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:14px 18px;border-bottom:1px solid var(--line-soft);background:#FCFCF9;
+}
+.search-box{
+  display:flex;align-items:center;gap:9px;
+  background:#fff;border:1px solid var(--line);border-radius:var(--pill);
+  padding:8px 14px;min-width:220px;flex:1;max-width:340px;
+  transition:border-color .16s, box-shadow .16s;
+}
+.search-box:focus-within{border-color:var(--yellow);box-shadow:0 0 0 4px var(--yellow-tint)}
+.search-box svg{width:15px;height:15px;color:var(--muted);flex:none}
+.search-box input{
+  flex:1;border:0;background:transparent;font-size:.86rem;color:var(--ink);padding:0;min-width:0;
+}
+.search-box input:focus{outline:none}
+
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.chip{
+  padding:6px 13px;border-radius:var(--pill);border:1px solid var(--line);
+  background:#fff;font-size:.78rem;font-weight:600;color:var(--muted);
+  transition:all .14s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--yellow-soft);color:var(--yellow-deep)}
+.chip.active{background:var(--yellow);border-color:var(--yellow);color:#1F1A0E}
+
+/* =========================================================================
+   EMPTY
+   ========================================================================= */
+.empty{padding:60px 20px;text-align:center}
+.empty .ico{
+  width:56px;height:56px;margin:0 auto 16px;display:grid;place-items:center;
+  border-radius:50%;background:var(--yellow-tint);color:var(--yellow-deep);
+}
+.empty .ico svg{width:26px;height:26px}
+.empty h3{font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px}
+.empty p{font-size:.86rem;color:var(--muted);max-width:340px;margin:0 auto}
+
+/* =========================================================================
+   DRAWER
+   ========================================================================= */
+.drawer{position:fixed;inset:0;z-index:60;pointer-events:none}
+.drawer.open{pointer-events:auto}
+.drawer-bd{
+  position:absolute;inset:0;background:rgba(31,26,14,.5);
+  backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+  opacity:0;transition:opacity .26s;
+}
+.drawer.open .drawer-bd{opacity:1}
+.drawer-panel{
+  position:absolute;right:0;top:0;bottom:0;
+  width:min(520px,100%);background:#fff;
+  display:flex;flex-direction:column;
+  transform:translateX(102%);transition:transform .34s cubic-bezier(.2,.7,.3,1);
+  box-shadow:-20px 0 60px rgba(31,26,14,.16);
+}
+.drawer.open .drawer-panel{transform:none}
+@media(max-width:640px){
+  .drawer-panel{
+    top:auto;left:0;right:0;bottom:0;height:min(90vh,760px);width:100%;
+    border-radius:24px 24px 0 0;
+    transform:translateY(102%);
+  }
+  .drawer.open .drawer-panel{transform:none}
+}
+
+.drawer-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:22px 24px 18px;border-bottom:1px solid var(--line-soft);
+}
+.drawer-head .dh-l{min-width:0}
+.drawer-head h3{font-size:1.28rem;margin-bottom:4px}
+.drawer-head .sub{font-size:.8rem;color:var(--muted)}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 24px 28px}
+
+.drawer-section{margin-bottom:22px}
+.drawer-section h4{
+  font-family:var(--sans);font-size:.68rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px;
+}
+
+.status-grid{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.status-btn{
+  padding:11px 12px;border-radius:11px;border:1.5px solid var(--line);
+  background:#fff;font-size:.82rem;font-weight:600;color:var(--ink);
+  transition:all .14s;text-align:left;display:flex;align-items:center;gap:9px;
+}
+.status-btn:hover{border-color:var(--yellow-soft);color:var(--yellow-deep)}
+.status-btn.active{background:var(--yellow);border-color:var(--yellow);color:#1F1A0E;box-shadow:0 8px 20px rgba(232,178,10,.28)}
+.status-btn .dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none;opacity:.75}
+
+.sum-list{list-style:none;margin:0;padding:4px 14px;border-radius:var(--r);background:#FBFAF5;border:1px solid var(--line-soft)}
+.sum-list li{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+  padding:11px 0;font-size:.87rem;border-bottom:1px solid var(--line-soft);
+}
+.sum-list li:last-child{border-bottom:0}
+.sum-list .k{color:var(--muted);flex:none}
+.sum-list .v{font-weight:600;text-align:right;word-break:break-word}
+.sum-list .v.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem}
+
+.line-items{list-style:none;margin:0;padding:4px 14px;border-radius:var(--r);background:#FBFAF5;border:1px solid var(--line-soft)}
+.line-items li{
+  display:flex;justify-content:space-between;gap:12px;padding:11px 0;
+  font-size:.86rem;border-bottom:1px solid var(--line-soft);
+}
+.line-items li:last-child{border-bottom:0}
+.line-items .lname{font-weight:600}
+.line-items .lsub{font-size:.76rem;color:var(--muted);margin-top:2px}
+.line-items .lprice{font-family:var(--serif);font-size:.98rem;font-weight:600;white-space:nowrap}
+
+.total-box{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:14px 16px;border-radius:var(--r);background:var(--yellow-tint);
+  margin-top:12px;
+}
+.total-box span{font-size:.7rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--yellow-deep)}
+.total-box strong{font-family:var(--serif);font-size:1.5rem;font-weight:600;color:var(--yellow-deep);line-height:1}
+
+.drawer-foot{
+  padding:18px 24px 22px;border-top:1px solid var(--line-soft);
+  background:#FCFCF9;display:flex;gap:10px;flex-wrap:wrap;
+}
+.drawer-foot .btn{flex:1;min-width:140px}
+
+/* =========================================================================
+   MODAL
+   ========================================================================= */
+.modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:16px;opacity:0;visibility:hidden;transition:opacity .24s, visibility .24s}
+.modal.open{opacity:1;visibility:visible}
+.modal-bd{position:absolute;inset:0;background:rgba(31,26,14,.52);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.modal-panel{
+  position:relative;width:100%;max-width:620px;background:#fff;border-radius:var(--r-xl);
+  box-shadow:var(--shadow-lg);max-height:92vh;overflow-y:auto;
+  transform:translateY(14px) scale(.985);transition:transform .28s cubic-bezier(.2,.7,.3,1);
+}
+.modal.open .modal-panel{transform:none}
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:5;
+  width:36px;height:36px;border-radius:50%;background:#F3F1EA;color:var(--ink);
+  font-size:1.2rem;line-height:1;display:grid;place-items:center;
+  transition:background .18s, transform .18s;
+}
+.modal-close:hover{background:var(--yellow);color:#1F1A0E;transform:rotate(90deg)}
+.modal-body{padding:28px 26px 30px}
+@media(min-width:640px){.modal-body{padding:32px 32px 34px}}
+.modal-head{margin-bottom:22px}
+.modal-head h3{font-size:1.3rem;margin-bottom:4px}
+.modal-head p{font-size:.85rem;color:var(--muted)}
+
+/* =========================================================================
+   FORMS
+   ========================================================================= */
+.field{margin-bottom:16px}
+.field > label,.field > .label{
+  display:block;font-size:.68rem;font-weight:700;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:7px;
+}
+.field .opt{text-transform:none;letter-spacing:0;font-weight:500;opacity:.75}
+.input,.textarea,.select{
+  width:100%;padding:11px 14px;border-radius:10px;
+  border:1px solid var(--line);background:#FBFAF5;
+  font-family:inherit;font-size:.88rem;color:var(--ink);
+  transition:border-color .16s, box-shadow .16s, background .16s;
+}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--yellow);background:#fff;box-shadow:0 0 0 4px var(--yellow-tint)}
+.textarea{min-height:84px;resize:vertical;line-height:1.55}
+.hint{font-size:.74rem;color:var(--muted);margin-top:5px}
+
+.row-2{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+
+.switch-row{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:#FBFAF5;
+}
+.switch-row strong{font-size:.86rem;font-weight:600;display:block}
+.switch-row span{font-size:.74rem;color:var(--muted)}
+.switch{
+  position:relative;width:44px;height:26px;flex:none;
+  background:var(--line);border-radius:var(--pill);
+  transition:background .18s;cursor:pointer;
+}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;
+  border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.15);
+  transition:transform .22s cubic-bezier(.2,.7,.3,1);
+}
+.switch.on{background:var(--yellow)}
+.switch.on::after{transform:translateX(18px)}
+.switch input{position:absolute;opacity:0;pointer-events:none}
+
+.form-error{
+  display:none;padding:10px 14px;border-radius:10px;background:#FBE9EA;
+  color:#8E1A1F;font-size:.83rem;margin-bottom:16px;line-height:1.5;
+}
+.form-error.show{display:block}
+
+.form-success{
+  display:none;padding:10px 14px;border-radius:10px;background:#E7EDD5;
+  color:#4A5E10;font-size:.83rem;margin-bottom:16px;line-height:1.5;
+}
+.form-success.show{display:block}
+
+/* =========================================================================
+   UPLOAD ZONE
+   ========================================================================= */
+.upload-zone{
+  position:relative;
+  border:2px dashed var(--line);
+  border-radius:14px;
+  background:#FBFAF5;
+  padding:26px 20px;
+  text-align:center;
+  transition:border-color .16s, background .16s;
+  cursor:pointer;
+}
+.upload-zone:hover,
+.upload-zone.drag-over{
+  border-color:var(--yellow);
+  background:var(--yellow-pale);
+}
+.upload-zone.drag-over{
+  transform:scale(1.005);
+  box-shadow:0 0 0 4px var(--yellow-tint);
+}
+.upload-zone.disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  pointer-events:none;
+}
+.upload-zone .uz-icon{
+  width:44px;height:44px;margin:0 auto 12px;display:grid;place-items:center;
+  border-radius:50%;background:var(--yellow-tint);color:var(--yellow-deep);
+}
+.upload-zone .uz-icon svg{width:22px;height:22px}
+.upload-zone .uz-title{font-size:.92rem;font-weight:600;color:var(--ink);margin-bottom:4px}
+.upload-zone .uz-sub{font-size:.78rem;color:var(--muted)}
+.upload-zone input[type="file"]{
+  position:absolute;inset:0;width:100%;height:100%;
+  opacity:0;cursor:pointer;
+}
+.upload-zone.disabled input[type="file"]{cursor:not-allowed}
+
+.upload-preview{
+  margin-top:14px;
+  border-radius:14px;
+  overflow:hidden;
+  background:#FBFAF5;
+  border:1px solid var(--line-soft);
+  display:grid;
+  grid-template-columns:96px 1fr;
+  gap:14px;
+  padding:12px;
+  align-items:center;
+}
+.upload-preview .up-thumb{
+  width:96px;height:96px;border-radius:11px;overflow:hidden;background:#E5E1D5;
+  display:grid;place-items:center;
+}
+.upload-preview .up-thumb img{width:100%;height:100%;object-fit:cover}
+.upload-preview .up-info{min-width:0}
+.upload-preview .up-name{
+  font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  margin-bottom:3px;
+}
+.upload-preview .up-meta{font-size:.74rem;color:var(--muted);margin-bottom:10px}
+
+.progress-bar{
+  height:6px;border-radius:var(--pill);background:var(--line-soft);
+  overflow:hidden;
+}
+.progress-bar > div{
+  height:100%;background:linear-gradient(90deg,#F5C418,#E8B20A);
+  width:0%;transition:width .2s;
+}
+.progress-info{
+  display:flex;justify-content:space-between;gap:10px;
+  font-size:.72rem;color:var(--muted);margin-top:6px;
+}
+
+.upload-options{
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center;
+  margin-top:12px;font-size:.8rem;color:var(--muted);
+}
+.upload-options label{
+  display:inline-flex;align-items:center;gap:8px;
+  cursor:pointer;user-select:none;
+}
+.upload-options input[type="checkbox"]{
+  width:16px;height:16px;accent-color:var(--yellow);cursor:pointer;
+}
+
+/* =========================================================================
+   ANNOUNCEMENT PREVIEW
+   ========================================================================= */
+.ann-preview{
+  border-radius:12px;padding:14px 16px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:flex-start;
+  border:1px solid transparent;
+}
+.ann-preview.info{background:#E3EFFB;border-color:#B6D6F5;color:#1A3A6E}
+.ann-preview.promo{background:#FFF2C8;border-color:#F0D888;color:#6A4F0A}
+.ann-preview.urgent{background:#FBE4DA;border-color:#E9B6A5;color:#7A2814}
+.ann-preview.success{background:#E7EDD5;border-color:#C8D9A5;color:#3A4E10}
+.ann-preview .ap-icon{
+  width:22px;height:22px;flex:none;display:grid;place-items:center;
+}
+.ann-preview .ap-icon svg{width:22px;height:22px}
+.ann-preview .ap-body{min-width:0;flex:1}
+.ann-preview .ap-title{font-size:.88rem;font-weight:700;margin-bottom:2px}
+.ann-preview .ap-msg{font-size:.84rem;line-height:1.5}
+
+.type-picker{display:grid;gap:8px;grid-template-columns:repeat(2,1fr)}
+.type-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;border-radius:11px;
+  border:1.5px solid var(--line);background:#fff;
+  font-size:.85rem;font-weight:600;cursor:pointer;
+  transition:all .16s;
+}
+.type-opt:hover{border-color:var(--yellow-soft)}
+.type-opt .swatch{width:14px;height:14px;border-radius:50%;flex:none}
+.type-opt.info .swatch{background:#1A56B8}
+.type-opt.promo .swatch{background:#E8B20A}
+.type-opt.urgent .swatch{background:#B0341A}
+.type-opt.success .swatch{background:#4A5E10}
+.type-opt.active{border-color:var(--yellow);background:var(--yellow-pale);box-shadow:0 0 0 3px rgba(232,178,10,.10)}
+.type-opt input{position:absolute;opacity:0;pointer-events:none}
+
+/* =========================================================================
+   SETTINGS
+   ========================================================================= */
+.settings-grid{display:grid;gap:20px}
+@media(min-width:900px){.settings-grid{grid-template-columns:1fr 1fr}}
+
+.kv{list-style:none;margin:0;padding:0}
+.kv li{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:.87rem}
+.kv li:last-child{border-bottom:0}
+.kv .k{color:var(--muted)}
+.kv .v{font-weight:600;text-align:right;word-break:break-word}
+
+.uid-box{
+  display:flex;gap:10px;align-items:center;
+  padding:11px 14px;border-radius:11px;background:#FBFAF5;
+  border:1px solid var(--line);margin-top:8px;
+}
+.uid-box code{
+  flex:1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.8rem;color:var(--ink);word-break:break-all;line-height:1.4;
+}
+.uid-box .btn{flex:none}
+
+.cloud-status{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 12px;border-radius:var(--pill);
+  font-size:.76rem;font-weight:700;letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.cloud-status.ok{background:#E7EDD5;color:#4A5E10}
+.cloud-status.warn{background:#FBE4DA;color:#B0341A}
+.cloud-status .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+.setup-list{
+  margin:14px 0 0;
+  padding-left:20px;
+  font-size:.86rem;
+  color:var(--muted);
+  line-height:1.7;
+}
+.setup-list li{margin-bottom:6px}
+.setup-list code{
+  background:var(--yellow-pale);color:var(--yellow-deep);
+  padding:2px 6px;border-radius:5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:.82rem;
+}
+.setup-list a{
+  color:var(--yellow-deep);
+  text-decoration:underline;
+}
+
+/* =========================================================================
+   TOAST
+   ========================================================================= */
+.toast-stack{
+  position:fixed;bottom:22px;right:22px;z-index:200;
+  display:flex;flex-direction:column;gap:10px;align-items:flex-end;
+  pointer-events:none;max-width:calc(100% - 44px);
+}
+@media(max-width:640px){.toast-stack{left:22px;right:22px;align-items:stretch}}
+.toast{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 16px;border-radius:13px;background:#1F1A0E;color:#fff;
+  font-size:.86rem;line-height:1.5;box-shadow:0 16px 40px rgba(31,26,14,.28);
+  opacity:0;transform:translateY(12px);
+  transition:opacity .28s, transform .28s;
+  pointer-events:auto;min-width:240px;
+}
+.toast.show{opacity:1;transform:none}
+.toast svg{width:17px;height:17px;flex:none;margin-top:1px}
+.toast.ok svg{color:#F5C418}
+.toast.err svg{color:#FFB877}
+.toast.info svg{color:#FFE9A8}
+
+/* =========================================================================
+   UTIL
+   ========================================================================= */
+.mt-1{margin-top:6px}
+.mt-2{margin-top:12px}
+.mt-3{margin-top:20px}
+.mt-4{margin-top:28px}
+.mb-2{margin-bottom:12px}
+.mb-3{margin-bottom:20px}
+.muted{color:var(--muted)}
+.small{font-size:.8rem}
+.center{text-align:center}
+.grow{flex:1}
+.divider{height:1px;background:var(--line-soft);margin:18px 0}
+</style>
+</head>
+
+<body>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gate-card" id="gateCard">
+    <div class="gate-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 9.5A3.5 3.5 0 0 1 8 3.2a3.6 3.6 0 0 1 4-1.4 3.6 3.6 0 0 1 4 1.4 3.5 3.5 0 0 1 1.5 6.3v6.2a1.8 1.8 0 0 1-1.8 1.8H8.3a1.8 1.8 0 0 1-1.8-1.8z"/>
+        <path d="M6.5 11.6h11"/>
+      </svg>
+    </div>
+    <h1 id="gateTitle">Checking access…</h1>
+    <p id="gateText">Please wait while we verify your account.</p>
+    <div class="spinner" id="gateSpinner"></div>
+    <div class="gate-actions" id="gateActions" hidden></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app" hidden>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-brand">
+        <span class="bm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6.5 9.5A3.5 3.5 0 0 1 8 3.2a3.6 3.6 0 0 1 4-1.4 3.6 3.6 0 0 1 4 1.4 3.5 3.5 0 0 1 1.5 6.3v6.2a1.8 1.8 0 0 1-1.8 1.8H8.3a1.8 1.8 0 0 1-1.8-1.8z"/>
+            <path d="M6.5 11.6h11"/>
+          </svg>
+        </span>
+        <div class="bt">
+          <strong>Chef Thara</strong>
+          <span>Admin Portal</span>
+        </div>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" id="sidebarNav">
+      <p class="nav-label">Overview</p>
+      <button data-tab="dashboard" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>
+        Dashboard
+      </button>
+
+      <p class="nav-label">Operations</p>
+      <button data-tab="orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3.5h14v17l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8.5h6M9 12.5h6"/></svg>
+        Orders
+        <span class="badge-count" id="navPendingCount" hidden>0</span>
+      </button>
+      <button data-tab="products">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5A4.5 4.5 0 0 1 8.5 7h7a4.5 4.5 0 0 1 4.5 4.5V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8.5 7v3M12 7v3M15.5 7v3"/></svg>
+        Products
+      </button>
+      <button data-tab="announcements">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5v3a1.5 1.5 0 0 0 1.5 1.5H6l4.5 3.5a1 1 0 0 0 1.6-.8V6.3a1 1 0 0 0-1.6-.8L6 9H4.5A1.5 1.5 0 0 0 3 10.5Z"/><path d="M16 8.5a5 5 0 0 1 0 7"/></svg>
+        Announcements
+        <span class="badge-count" id="navAnnCount" hidden>0</span>
+      </button>
+      <button data-tab="customers">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><path d="M16.5 5.2a3.4 3.4 0 0 1 0 6.6M18 20a6.4 6.4 0 0 0-2-4.6"/></svg>
+        Customers
+      </button>
+
+      <p class="nav-label">System</p>
+      <button data-tab="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 1.56V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.56V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15 4.6a1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9v.09a1.7 1.7 0 0 0 1.56 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1z"/></svg>
+        Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="sidebar-user">
+        <div class="av" id="sideAvatar">A</div>
+        <div class="uinfo">
+          <div class="uname" id="sideName">Admin</div>
+          <div class="uemail" id="sideEmail"></div>
+        </div>
+      </div>
+      <button class="signout" id="signOutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5"/><path d="M20 12H9"/><path d="M12 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="burger" id="burger" aria-label="Open menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="topbar-title">
+        <h2 id="pageTitle">Dashboard</h2>
+        <p id="pageSubtitle">Overview of your kitchen</p>
+      </div>
+      <div class="topbar-actions">
+        <a class="icon-btn" href="./index.html" target="_blank" rel="noopener" title="View customer site">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M20 14v5a1.8 1.8 0 0 1-1.8 1.8H5.8A1.8 1.8 0 0 1 4 19V6.8A1.8 1.8 0 0 1 5.8 5H11"/></svg>
+        </a>
+        <button class="icon-btn" id="refreshBtn" title="Refresh data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.3L3 16"/><path d="M3 21v-5h5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="content"></main>
+  </div>
+</div>
+
+<!-- ORDER DRAWER -->
+<div class="drawer" id="orderDrawer" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="drawer-bd" data-close-order></div>
+  <div class="drawer-panel">
+    <div class="drawer-head">
+      <div class="dh-l">
+        <h3 id="odTitle">Order</h3>
+        <p class="sub" id="odSubtitle"></p>
+      </div>
+      <button class="icon-btn" data-close-order aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="odBody"></div>
+    <div class="drawer-foot" id="odFoot"></div>
+  </div>
+</div>
+
+<!-- PRODUCT EDITOR MODAL -->
+<div class="modal" id="productModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-bd" data-close-product></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close-product aria-label="Close">&times;</button>
+    <div class="modal-body">
+      <div class="modal-head">
+        <h3 id="pmTitle">Add product</h3>
+        <p id="pmSubtitle">Fill in the details below.</p>
+      </div>
+
+      <div class="form-error" id="pmError"></div>
+
+      <form id="productForm" novalidate>
+        <div class="field">
+          <label for="pfName">Product name</label>
+          <input class="input" type="text" id="pfName" placeholder="e.g. Sunday Roast Plate" required>
+        </div>
+
+        <div class="field">
+          <label for="pfDesc">Description</label>
+          <textarea class="textarea" id="pfDesc" placeholder="A short, tasty description."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Product image</label>
+
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="pfUpload" accept="image/*">
+            <div class="uz-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 16V4"/><path d="M7 9l5-5 5 5"/>
+                <path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V17"/>
+              </svg>
+            </div>
+            <div class="uz-title">Drop an image here or click to browse</div>
+            <div class="uz-sub" id="uzSub">Uploads to Cloudinary — any size, any quality</div>
+          </div>
+
+          <div class="upload-options">
+            <label>
+              <input type="checkbox" id="pfCompress" checked>
+              Compress before upload (recommended)
+            </label>
+            <label>
+              <input type="checkbox" id="pfKeepOriginal">
+              Keep original quality
+            </label>
+          </div>
+
+          <div class="upload-preview" id="uploadPreview" hidden>
+            <div class="up-thumb" id="upThumb"></div>
+            <div class="up-info">
+              <div class="up-name" id="upName">—</div>
+              <div class="up-meta" id="upMeta">—</div>
+              <div class="progress-bar"><div id="upProgress"></div></div>
+              <div class="progress-info">
+                <span id="upStatus">Ready</span>
+                <span id="upPct">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="hint" style="margin-top:10px">Or paste an image URL:</p>
+          <input class="input mt-1" type="text" id="pfImage" placeholder="https://… or Product 1.jpeg">
+        </div>
+
+        <div class="field">
+          <label>Prices / options</label>
+          <div id="pfSizes"></div>
+          <button class="btn btn-outline btn-sm mt-2" type="button" id="pfAddSize">+ Add another option</button>
+        </div>
+
+        <div class="row-2 mb-2">
+          <div class="switch-row">
+            <div>
+              <strong>Available</strong>
+              <span>Shown on the menu</span>
+            </div>
+            <label class="switch" id="pfAvailableSwitch">
+              <input type="checkbox" id="pfAvailable">
+            </label>
+          </div>
+          <div class="switch-row">
+            <div>
+              <strong>Featured</strong>
+              <span>Home page</span>
+            </div>
+            <label class="switch" id="pfFeaturedSwitch">
+              <input type="checkbox" id="pfFeatured">
+            </label>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <button class="btn btn-outline btn-block" type="button" data-close-product>Cancel</button>
+          <button class="btn btn-primary btn-block" type="submit" id="pfSave">Save product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENT EDITOR MODAL -->
+<div class="modal" id="annModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-bd" data-close-ann></div>
+  <div class="modal-panel">
+    <button class="modal-close" data-close-ann aria-label="Close">&times;</button>
+    <div class="modal-body">
+      <div class="modal-head">
+        <h3 id="amTitle">New announcement</h3>
+        <p id="amSubtitle">This will appear as a banner on the customer site.</p>
+      </div>
+
+      <div class="form-error" id="amError"></div>
+
+      <form id="annForm" novalidate>
+        <div class="field">
+          <label>Preview</label>
+          <div class="ann-preview info" id="amPreview">
+            <div class="ap-icon" id="amPreviewIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>
+            </div>
+            <div class="ap-body">
+              <div class="ap-title" id="amPreviewTitle">Announcement title</div>
+              <div class="ap-msg" id="amPreviewMsg">Your message will appear here.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="amTitleInput">Title</label>
+          <input class="input" type="text" id="amTitleInput" placeholder="e.g. Open for weekend orders" maxlength="80" required>
+        </div>
+
+        <div class="field">
+          <label for="amMessageInput">Message</label>
+          <textarea class="textarea" id="amMessageInput" placeholder="The details you want customers to see." maxlength="280"></textarea>
+          <p class="hint"><span id="amCharCount">0</span> / 280 characters</p>
+        </div>
+
+        <div class="field">
+          <label>Style</label>
+          <div class="type-picker">
+            <label class="type-opt info active">
+              <input type="radio" name="amType" value="info" checked>
+              <span class="swatch"></span>
+              Info
+            </label>
+            <label class="type-opt promo">
+              <input type="radio" name="amType" value="promo">
+              <span class="swatch"></span>
+              Promo
+            </label>
+            <label class="type-opt urgent">
+              <input type="radio" name="amType" value="urgent">
+              <span class="swatch"></span>
+              Urgent
+            </label>
+            <label class="type-opt success">
+              <input type="radio" name="amType" value="success">
+              <span class="swatch"></span>
+              Success
+            </label>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="amCtaLabel">Button label <span class="opt">(optional)</span></label>
+            <input class="input" type="text" id="amCtaLabel" placeholder="e.g. Order now" maxlength="30">
+          </div>
+          <div class="field">
+            <label for="amCtaHref">Button link <span class="opt">(optional)</span></label>
+            <input class="input" type="text" id="amCtaHref" placeholder="e.g. #/menu or https://…">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="amExpires">Expires on <span class="opt">(optional)</span></label>
+          <input class="input" type="date" id="amExpires">
+          <p class="hint">If set, the banner hides automatically after this date.</p>
+        </div>
+
+        <div class="switch-row mb-2">
+          <div>
+            <strong>Active</strong>
+            <span>Show this on the customer site</span>
+          </div>
+          <label class="switch" id="amActiveSwitch">
+            <input type="checkbox" id="amActive" checked>
+          </label>
+        </div>
+
+        <div class="row-2">
+          <button class="btn btn-outline btn-block" type="button" data-close-ann>Cancel</button>
+          <button class="btn btn-primary btn-block" type="submit" id="amSave">Save announcement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<!-- =========================================================================
+     APP SCRIPT
+     ========================================================================= -->
+<script type="module">
+/* =========================================================================
+   CONFIG
+   ========================================================================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyBUGXJD4FnQcGzqvFqG5P_GGohq3WYvXmc",
+  authDomain: "chef-thara-bakes.firebaseapp.com",
+  projectId: "chef-thara-bakes",
+  storageBucket: "chef-thara-bakes.firebasestorage.app",
+  messagingSenderId: "272610752021",
+  appId: "1:272610752021:web:1aaa61cc49852481a0001c"
+};
+
+const BAKERY = { name: "Chef Thara Bakes", currency: "R" };
+
+const ORDER_STATUSES = [
+  "Pending", "Confirmed", "Preparing", "Ready",
+  "Out for Delivery", "Completed", "Cancelled"
+];
+
+const ANNOUNCEMENT_TYPES = ["info", "promo", "urgent", "success"];
+
+const IMAGE = {
+  maxDim: 1600,
+  quality: 0.85,
+  maxBytesWarning: 12 * 1024 * 1024
+};
+
+const CLOUDINARY_LS_KEY = "ctb_cloudinary";
+
+/* =========================================================================
+   FIREBASE
+   ========================================================================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signOut as fbSignOut
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getFirestore, collection, doc, getDoc, getDocs, addDoc,
+  updateDoc, deleteDoc, query, orderBy, serverTimestamp, limit
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const fb = { app: null, auth: null, db: null };
+
+try {
+  fb.app  = initializeApp(firebaseConfig);
+  fb.auth = getAuth(fb.app);
+  fb.db   = getFirestore(fb.app);
+} catch (err) {
+  console.error("Firebase init failed:", err);
+  document.getElementById("gateTitle").textContent = "Setup error";
+  document.getElementById("gateText").textContent = "Firebase failed to initialise. Check the browser console.";
+  document.getElementById("gateSpinner").hidden = true;
+  throw err;
+}
+
+/* =========================================================================
+   CLOUDINARY CONFIG
+   ========================================================================= */
+function getCloudinaryConfig() {
+  try {
+    const raw = localStorage.getItem(CLOUDINARY_LS_KEY);
+    if (!raw) return { cloudName: "", uploadPreset: "", folder: "" };
+    const cfg = JSON.parse(raw);
+    return {
+      cloudName: cfg.cloudName || "",
+      uploadPreset: cfg.uploadPreset || "",
+      folder: cfg.folder || ""
+    };
+  } catch {
+    return { cloudName: "", uploadPreset: "", folder: "" };
+  }
+}
+
+function saveCloudinaryConfig(cfg) {
+  localStorage.setItem(CLOUDINARY_LS_KEY, JSON.stringify({
+    cloudName: (cfg.cloudName || "").trim(),
+    uploadPreset: (cfg.uploadPreset || "").trim(),
+    folder: (cfg.folder || "").trim()
+  }));
+}
+
+function isCloudinaryConfigured() {
+  const cfg = getCloudinaryConfig();
+  return !!(cfg.cloudName && cfg.uploadPreset);
+}
+
+/* =========================================================================
+   HELPERS
+   ========================================================================= */
+const $  = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+
+const money = n => BAKERY.currency + Number(n || 0).toFixed(0);
+const esc = (s = "") => String(s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+
+function toDate(v) {
+  if (!v) return null;
+  if (typeof v.toDate === "function") return v.toDate();
+  if (typeof v === "object" && "seconds" in v) return new Date(v.seconds * 1000);
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDate(v, withTime = false) {
+  const d = toDate(v);
+  if (!d) return "—";
+  const opts = { day: "numeric", month: "short", year: "numeric" };
+  if (withTime) { opts.hour = "2-digit"; opts.minute = "2-digit"; }
+  return d.toLocaleDateString("en-ZA", opts);
+}
+
+function timeAgo(v) {
+  const d = toDate(v);
+  if (!d) return "—";
+  const diff = Date.now() - d.getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return m + "m ago";
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + "h ago";
+  const days = Math.floor(h / 24);
+  if (days < 7) return days + "d ago";
+  return formatDate(v);
+}
+
+function imgSrc(p) {
+  if (!p) return "";
+  const s = p.imageUrl || p.image || "";
+  if (!s) return "";
+  if (/^(https?:|data:|\/)/i.test(s)) return s;
+  return encodeURI(s);
+}
+
+const statusCls = s => "badge badge-" + String(s || "Pending").replace(/\s/g, "");
+function badge(status) {
+  const s = String(status || "Pending");
+  return `<span class="${statusCls(s)}">${esc(s)}</span>`;
+}
+
+function formatBytes(bytes) {
+  if (!bytes) return "0 B";
+  const k = 1024, sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(i === 0 ? 0 : 1) + " " + sizes[i];
+}
+
+/* =========================================================================
+   TOAST
+   ========================================================================= */
+const ICONS = {
+  ok:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+  err:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.01"/></svg>'
+};
+
+function toast(msg, type = "info", ms = 3200) {
+  const stack = $("#toastStack");
+  const el = document.createElement("div");
+  el.className = "toast " + type;
+  el.innerHTML = (ICONS[type] || ICONS.info) + "<span>" + esc(msg) + "</span>";
+  stack.appendChild(el);
+  requestAnimationFrame(() => el.classList.add("show"));
+  setTimeout(() => {
+    el.classList.remove("show");
+    setTimeout(() => el.remove(), 300);
+  }, ms);
+}
+
+/* =========================================================================
+   IMAGE COMPRESSION
+   ========================================================================= */
+async function compressImage(file, maxDim = IMAGE.maxDim, quality = IMAGE.quality) {
+  let source;
+  try {
+    source = await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    source = await new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not read image")); };
+      img.src = url;
+    });
+  }
+
+  let w = source.width, h = source.height;
+  if (w > maxDim || h > maxDim) {
+    if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+    else { w = Math.round(w * maxDim / h); h = maxDim; }
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(source, 0, 0, w, h);
+
+  const blob = await new Promise((resolve, reject) => {
+    canvas.toBlob(
+      b => b ? resolve(b) : reject(new Error("Compression failed")),
+      "image/jpeg",
+      quality
+    );
+  });
+
+  if (source.close) source.close();
+  return { blob, width: w, height: h };
+}
+
+/* =========================================================================
+   CLOUDINARY UPLOAD
+   ========================================================================= */
+function uploadToCloudinary(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const cfg = getCloudinaryConfig();
+    if (!cfg.cloudName || !cfg.uploadPreset) {
+      reject(new Error("Cloudinary is not configured. Open Settings to set your cloud name and upload preset."));
+      return;
+    }
+
+    const url = `https://api.cloudinary.com/v1_1/${cfg.cloudName}/image/upload`;
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", cfg.uploadPreset);
+    if (cfg.folder) form.append("folder", cfg.folder);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url, true);
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && onProgress) {
+        onProgress(Math.round((e.loaded / e.total) * 100));
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try {
+          const data = JSON.parse(xhr.responseText);
+          if (data.secure_url) resolve(data);
+          else reject(new Error("Cloudinary did not return a URL. Check your upload preset settings."));
+        } catch {
+          reject(new Error("Invalid response from Cloudinary"));
+        }
+      } else {
+        let msg = `Upload failed (${xhr.status})`;
+        try {
+          const err = JSON.parse(xhr.responseText);
+          if (err.error?.message) msg += ": " + err.error.message;
+        } catch {}
+        reject(new Error(msg));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error("Network error uploading to Cloudinary. Check your connection."));
+    xhr.ontimeout = () => reject(new Error("Upload timed out. Try a smaller image or a different connection."));
+    xhr.timeout = 120000;
+
+    xhr.send(form);
+  });
+}
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+const state = {
+  user: null,
+  isAdmin: false,
+  tab: "dashboard",
+  orders: [],
+  products: [],
+  announcements: [],
+  customers: [],
+  ordersCache: null,
+  productsCache: null,
+  announcementsCache: null,
+  customersCache: null,
+  filterStatus: "All",
+  searchTerm: "",
+  currentOrder: null,
+  editingAnn: null
+};
+
+/* =========================================================================
+   AUTH GATE
+   ========================================================================= */
+const gate = $("#gate");
+const gateTitle = $("#gateTitle");
+const gateText = $("#gateText");
+const gateSpinner = $("#gateSpinner");
+const gateActions = $("#gateActions");
+const app = $("#app");
+
+function showGate(title, text, opts = {}) {
+  gate.hidden = false;
+  app.hidden = true;
+  gateTitle.textContent = title;
+  gateText.textContent = text;
+  gateSpinner.hidden = !opts.loading;
+  gateActions.hidden = !opts.actions;
+  if (opts.actions) {
+    gateActions.innerHTML = "";
+    opts.actions.forEach(a => {
+      const el = document.createElement(a.href ? "a" : "button");
+      el.className = "btn " + (a.primary ? "btn-primary" : "btn-outline") + " btn-block";
+      el.textContent = a.label;
+      if (a.href) el.href = a.href;
+      if (a.onClick) el.addEventListener("click", a.onClick);
+      gateActions.appendChild(el);
+    });
+  }
+}
+
+function showApp() { gate.hidden = true; app.hidden = false; }
+
+onAuthStateChanged(fb.auth, async (user) => {
+  if (!user) {
+    state.user = null;
+    showGate(
+      "Sign in required",
+      "You need to be signed in to access the admin portal. Open the customer site, sign in with your admin account, then come back here.",
+      {
+        actions: [
+          { label: "Open customer site", href: "./index.html", primary: true },
+          { label: "Sign in here", onClick: () => location.href = "./index.html#/" }
+        ]
+      }
+    );
+    return;
+  }
+
+  state.user = user;
+  showGate("Checking access…", "Verifying your administrator account.", { loading: true });
+
+  try {
+    const adminSnap = await getDoc(doc(fb.db, "admins", user.uid));
+    if (!adminSnap.exists()) {
+      showGate(
+        "Access denied",
+        "Your account is not authorised for the admin portal. If you should have access, ask the owner to add your user ID to the admins collection in Firebase.",
+        {
+          actions: [
+            { label: "Back to customer site", href: "./index.html", primary: true },
+            { label: "Sign out", onClick: () => fbSignOut(fb.auth) }
+          ]
+        }
+      );
+      return;
+    }
+
+    state.isAdmin = true;
+    initAdminUI();
+    showApp();
+    await bootData();
+  } catch (err) {
+    console.error(err);
+    showGate("Could not verify access", "Something went wrong checking your permissions. Check your connection and try again.",
+      { actions: [{ label: "Retry", onClick: () => location.reload(), primary: true }] });
+  }
+});
+
+/* =========================================================================
+   UI INIT
+   ========================================================================= */
+function initAdminUI() {
+  const name = state.user.displayName || state.user.email || "Admin";
+  const initials = name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("") || "A";
+  $("#sideAvatar").textContent = initials;
+  $("#sideName").textContent = name;
+  $("#sideEmail").textContent = state.user.email || "";
+
+  $("#signOutBtn").addEventListener("click", async () => {
+    if (!confirm("Sign out of the admin portal?")) return;
+    await fbSignOut(fb.auth);
+    location.href = "./index.html";
+  });
+
+  $("#sidebarNav").addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-tab]");
+    if (!btn) return;
+    setTab(btn.dataset.tab);
+    if (window.innerWidth < 900) closeSidebar();
+  });
+
+  $("#burger").addEventListener("click", openSidebar);
+  $("#sidebarClose").addEventListener("click", closeSidebar);
+
+  $("#refreshBtn").addEventListener("click", async () => {
+    const btn = $("#refreshBtn");
+    btn.classList.add("spin");
+    state.ordersCache = null;
+    state.productsCache = null;
+    state.announcementsCache = null;
+    state.customersCache = null;
+    try { await bootData(); toast("Data refreshed.", "ok", 1800); }
+    finally { setTimeout(() => btn.classList.remove("spin"), 600); }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".sidebar") && !e.target.closest("#burger") && window.innerWidth < 900) {
+      closeSidebar();
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      closeDrawer();
+      closeProductModal();
+      closeAnnModal();
+      closeSidebar();
+    }
+  });
+}
+
+function openSidebar(){ $("#sidebar").classList.add("open"); document.body.classList.add("locked"); }
+function closeSidebar(){ $("#sidebar").classList.remove("open"); document.body.classList.remove("locked"); }
+
+/* =========================================================================
+   TABS
+   ========================================================================= */
+const TITLES = {
+  dashboard:     { t: "Dashboard",     s: "Overview of your kitchen" },
+  orders:        { t: "Orders",        s: "Manage incoming orders" },
+  products:      { t: "Products",      s: "Your menu catalogue" },
+  announcements: { t: "Announcements", s: "Banner messages shown on the customer site" },
+  customers:     { t: "Customers",     s: "Everyone who has registered" },
+  settings:      { t: "Settings",      s: "Account and system details" }
+};
+
+function setTab(tab) {
+  state.tab = tab;
+  state.searchTerm = "";
+  state.filterStatus = "All";
+  $$("#sidebarNav button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  const info = TITLES[tab] || TITLES.dashboard;
+  $("#pageTitle").textContent = info.t;
+  $("#pageSubtitle").textContent = info.s;
+  render();
+}
+
+/* =========================================================================
+   DATA LOAD
+   ========================================================================= */
+async function loadOrders(force = false) {
+  if (state.ordersCache && !force) return state.orders;
+  try {
+    const q = query(collection(fb.db, "orders"), orderBy("createdAt", "desc"), limit(300));
+    const snap = await getDocs(q);
+    state.orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.warn("Sorted orders query failed, falling back:", err);
+    try {
+      const snap = await getDocs(collection(fb.db, "orders"));
+      state.orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (err2) {
+      console.warn("Orders collection unavailable:", err2);
+      state.orders = [];
+    }
+  }
+  state.ordersCache = true;
+  return state.orders;
+}
+
+async function loadProducts(force = false) {
+  if (state.productsCache && !force) return state.products;
+  try {
+    const snap = await getDocs(collection(fb.db, "products"));
+    state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  } catch (err) {
+    console.warn("Products collection unavailable:", err);
+    state.products = [];
+  }
+  state.productsCache = true;
+  return state.products;
+}
+
+async function loadAnnouncements(force = false) {
+  if (state.announcementsCache && !force) return state.announcements;
+  try {
+    const q = query(collection(fb.db, "announcements"), orderBy("createdAt", "desc"), limit(100));
+    const snap = await getDocs(q);
+    state.announcements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.warn("Sorted announcements query failed, falling back:", err);
+    try {
+      const snap = await getDocs(collection(fb.db, "announcements"));
+      state.announcements = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (err2) {
+      console.warn("Announcements collection unavailable:", err2);
+      state.announcements = [];
+    }
+  }
+  state.announcementsCache = true;
+  return state.announcements;
+}
+
+async function loadCustomers(force = false) {
+  if (state.customersCache && !force) return state.customers;
+  try {
+    const snap = await getDocs(collection(fb.db, "users"));
+    state.customers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.warn("Customers collection unavailable:", err);
+    state.customers = [];
+  }
+  state.customersCache = true;
+  return state.customers;
+}
+
+async function bootData() {
+  render();
+  const results = await Promise.allSettled([
+    loadOrders(),
+    loadProducts(),
+    loadAnnouncements(),
+    loadCustomers()
+  ]);
+
+  const failed = results.filter(r => r.status === "rejected");
+  if (failed.length) console.warn("Some collections failed to load:", failed);
+
+  if (failed.length === results.length) {
+    $("#content").innerHTML = errorCard(
+      "Could not load any data",
+      "All Firestore collections failed. Check the browser console for the exact error, then check your Firestore rules."
+    );
+    return;
+  }
+
+  updateNavBadge();
+  render();
+
+  if (failed.length) {
+    toast(`${failed.length} collection(s) failed to load — check console.`, "info", 5000);
+  }
+}
+
+function updateNavBadge() {
+  const pending = state.orders.filter(o => (o.orderStatus || "Pending") === "Pending").length;
+  const navPending = $("#navPendingCount");
+  navPending.textContent = pending;
+  navPending.hidden = pending === 0;
+
+  const activeAnn = state.announcements.filter(isAnnActive).length;
+  const navAnn = $("#navAnnCount");
+  navAnn.textContent = activeAnn;
+  navAnn.hidden = activeAnn === 0;
+}
+
+function isAnnActive(a) {
+  if (!a || a.active === false) return false;
+  const exp = toDate(a.expiresAt);
+  if (exp && exp.getTime() < Date.now()) return false;
+  return true;
+}
+
+/* =========================================================================
+   RENDER ROUTER
+   ========================================================================= */
+function render() {
+  const content = $("#content");
+  switch (state.tab) {
+    case "orders":        content.innerHTML = viewOrders();        attachOrders();        break;
+    case "products":      content.innerHTML = viewProducts();      attachProducts();      break;
+    case "announcements": content.innerHTML = viewAnnouncements(); attachAnnouncements(); break;
+    case "customers":     content.innerHTML = viewCustomers();     attachCustomers();     break;
+    case "settings":      content.innerHTML = viewSettings();      attachSettings();      break;
+    default:              content.innerHTML = viewDashboard();     attachDashboard();
+  }
+}
+
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+function viewDashboard() {
+  const orders = state.orders;
+  const countBy = s => orders.filter(o => (o.orderStatus || "Pending") === s).length;
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const revenueToday = orders
+    .filter(o => (o.orderStatus || "") !== "Cancelled" && (toDate(o.createdAt)?.getTime() || 0) >= startOfToday.getTime())
+    .reduce((s, o) => s + Number(o.totalAmount || 0), 0);
+
+  const revenueMonth = orders
+    .filter(o => (o.orderStatus || "") !== "Cancelled" && (toDate(o.createdAt)?.getTime() || 0) >= startOfMonth.getTime())
+    .reduce((s, o) => s + Number(o.totalAmount || 0), 0);
+
+  const avgOrder = orders.length
+    ? Math.round(orders.reduce((s, o) => s + Number(o.totalAmount || 0), 0) / orders.length)
+    : 0;
+
+  const recent = orders.slice(0, 6);
+  const activeAnn = state.announcements.filter(isAnnActive).length;
+
+  return `
+    <div class="stat-grid">
+      <div class="stat accent">
+        <div class="stat-lbl"><span class="dot"></span> New orders</div>
+        <div class="num">${countBy("Pending")}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl"><span class="dot" style="color:#A85B00"></span> Preparing</div>
+        <div class="num">${countBy("Preparing")}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl"><span class="dot" style="color:#1B7A3E"></span> Ready</div>
+        <div class="num">${countBy("Ready") + countBy("Out for Delivery")}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl"><span class="dot" style="color:#2E6B3C"></span> Completed</div>
+        <div class="num">${countBy("Completed")}</div>
+      </div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="card card-pad">
+        <div class="stat-lbl" style="color:var(--muted);font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px">Today's revenue</div>
+        <div class="num" style="font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--yellow-deep)">${money(revenueToday)}</div>
+      </div>
+      <div class="card card-pad">
+        <div class="stat-lbl" style="color:var(--muted);font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px">This month</div>
+        <div class="num" style="font-family:var(--serif);font-size:1.6rem;font-weight:600">${money(revenueMonth)}</div>
+      </div>
+      <div class="card card-pad">
+        <div class="stat-lbl" style="color:var(--muted);font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px">Average order</div>
+        <div class="num" style="font-family:var(--serif);font-size:1.6rem;font-weight:600">${money(avgOrder)}</div>
+      </div>
+      <div class="card card-pad">
+        <div class="stat-lbl" style="color:var(--muted);font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;margin-bottom:8px">Active announcements</div>
+        <div class="num" style="font-family:var(--serif);font-size:1.6rem;font-weight:600">${activeAnn}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Recent orders</h3>
+          <p>The last ${recent.length} orders placed on the website.</p>
+        </div>
+        <button class="btn btn-outline btn-sm" data-go="orders">See all orders</button>
+      </div>
+      ${recent.length ? ordersTable(recent, false) : emptyBlock("No orders yet", "When customers place orders they'll appear here.")}
+    </div>
+  `;
+}
+
+function attachDashboard() {
+  const btn = $("[data-go='orders']");
+  if (btn) btn.addEventListener("click", () => setTab("orders"));
+
+  const tbody = $("#content tbody");
+  if (tbody) {
+    tbody.addEventListener("click", (e) => {
+      const tr = e.target.closest("tr[data-id]");
+      if (tr) openOrder(tr.dataset.id);
+    });
+  }
+}
+
+/* =========================================================================
+   ORDERS
+   ========================================================================= */
+function viewOrders() {
+  const filter = state.filterStatus;
+  const term = state.searchTerm.toLowerCase().trim();
+
+  let list = state.orders;
+  if (filter !== "All") list = list.filter(o => (o.orderStatus || "Pending") === filter);
+  if (term) {
+    list = list.filter(o => {
+      const hay = [o.orderCode, o.customerName, o.customerPhone, o.customerEmail].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(term);
+    });
+  }
+
+  const chips = ["All", ...ORDER_STATUSES].map(s => {
+    const count = s === "All"
+      ? state.orders.length
+      : state.orders.filter(o => (o.orderStatus || "Pending") === s).length;
+    return `<button class="chip${s === filter ? " active" : ""}" data-filter="${esc(s)}">${esc(s)} · ${count}</button>`;
+  }).join("");
+
+  return `
+    <div class="card">
+      <div class="filters-bar">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="orderSearch" placeholder="Search order code, name, phone…" value="${esc(state.searchTerm)}">
+        </div>
+        <div class="chip-row">${chips}</div>
+      </div>
+      ${list.length ? ordersTable(list, true) : emptyBlock("No orders match", "Try a different filter or search term.")}
+    </div>
+  `;
+}
+
+function ordersTable(orders, withActions) {
+  return `
+    <div class="table-wrap">
+      <table class="data">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Date</th>
+            ${withActions ? "<th></th>" : ""}
+          </tr>
+        </thead>
+        <tbody>
+          ${orders.map(o => `
+            <tr data-id="${esc(o.id)}">
+              <td class="mono">${esc(o.orderCode || "—")}</td>
+              <td>
+                <div class="cell-main">${esc(o.customerName || "—")}</div>
+                <div class="cell-sub">${esc(o.customerPhone || "")}</div>
+              </td>
+              <td>${(o.items || []).reduce((s, i) => s + (i.qty || 0), 0)}</td>
+              <td><strong>${money(o.totalAmount)}</strong></td>
+              <td>${badge(o.orderStatus)}</td>
+              <td class="muted small">${timeAgo(o.createdAt)}</td>
+              ${withActions ? `<td><button class="btn btn-outline btn-xs" data-view="${esc(o.id)}">View</button></td>` : ""}
+            </tr>`).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function attachOrders() {
+  const search = $("#orderSearch");
+  if (search) {
+    search.addEventListener("input", (e) => {
+      state.searchTerm = e.target.value;
+      const filtered = filterOrders();
+      const card = $("#content .card");
+      const existing = card.querySelector(".table-wrap, .empty");
+      if (existing) {
+        existing.outerHTML = filtered.length
+          ? ordersTable(filtered, true)
+          : emptyBlock("No orders match", "Try a different filter or search term.");
+        bindRowClicks();
+      }
+    });
+  }
+
+  $$("[data-filter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      state.filterStatus = btn.dataset.filter;
+      render();
+    });
+  });
+
+  bindRowClicks();
+}
+
+function filterOrders() {
+  const filter = state.filterStatus;
+  const term = state.searchTerm.toLowerCase().trim();
+  let list = state.orders;
+  if (filter !== "All") list = list.filter(o => (o.orderStatus || "Pending") === filter);
+  if (term) {
+    list = list.filter(o => {
+      const hay = [o.orderCode, o.customerName, o.customerPhone, o.customerEmail].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(term);
+    });
+  }
+  return list;
+}
+
+function bindRowClicks() {
+  $$("tbody tr[data-id]").forEach(tr => {
+    tr.addEventListener("click", (e) => {
+      if (e.target.closest("button[data-view]")) e.stopPropagation();
+      openOrder(tr.dataset.id);
+    });
+  });
+}
+
+/* =========================================================================
+   ORDER DRAWER
+   ========================================================================= */
+const drawer = $("#orderDrawer");
+
+async function openOrder(id) {
+  const order = state.orders.find(o => o.id === id);
+  if (!order) return;
+  state.currentOrder = order;
+
+  $("#odTitle").textContent = order.orderCode || "Order";
+  $("#odSubtitle").textContent = "Placed " + formatDate(order.createdAt, true);
+  $("#odBody").innerHTML = renderOrderBody(order);
+  $("#odFoot").innerHTML = renderOrderFoot(order);
+
+  $$("[data-status-btn]").forEach(btn => {
+    btn.addEventListener("click", () => updateOrderStatus(order.id, btn.dataset.statusBtn));
+  });
+
+  $("#odWhatsApp")?.addEventListener("click", () => {
+    const phone = (order.customerPhone || "").replace(/\D/g, "").replace(/^0/, "27");
+    const msg = `Hi ${order.customerName || ""}, this is ${BAKERY.name} about your order ${order.orderCode || ""}.`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, "_blank");
+  });
+
+  $("#odCall")?.addEventListener("click", () => {
+    const phone = (order.customerPhone || "").replace(/\s/g, "");
+    if (phone) window.location.href = "tel:" + phone;
+  });
+
+  drawer.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  document.body.classList.add("locked");
+}
+
+function closeDrawer() {
+  drawer.classList.remove("open");
+  drawer.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("locked");
+}
+
+$$("[data-close-order]").forEach(el => el.addEventListener("click", closeDrawer));
+
+function renderOrderBody(order) {
+  const items = (order.items || []).map(i => `
+    <li>
+      <div>
+        <div class="lname">${esc(i.name)}</div>
+        <div class="lsub">${esc(i.size)} · ${money(i.price)} × ${i.qty}</div>
+      </div>
+      <div class="lprice">${money((i.price || 0) * (i.qty || 0))}</div>
+    </li>`).join("");
+
+  const statusButtons = ORDER_STATUSES.map(s => `
+    <button class="status-btn${s === (order.orderStatus || "Pending") ? " active" : ""}"
+            data-status-btn="${esc(s)}">
+      <span class="dot"></span>
+      ${esc(s)}
+    </button>`).join("");
+
+  return `
+    <div class="drawer-section">
+      <h4>Update status</h4>
+      <div class="status-grid">${statusButtons}</div>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Items</h4>
+      <ul class="line-items">${items || "<li><span class='muted'>No items</span></li>"}</ul>
+      <div class="total-box">
+        <span>Total</span>
+        <strong>${money(order.totalAmount)}</strong>
+      </div>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Customer</h4>
+      <ul class="sum-list">
+        <li><span class="k">Name</span><span class="v">${esc(order.customerName || "—")}</span></li>
+        <li><span class="k">Phone</span><span class="v">${esc(order.customerPhone || "—")}</span></li>
+        <li><span class="k">Email</span><span class="v">${esc(order.customerEmail || "—")}</span></li>
+      </ul>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Delivery</h4>
+      <ul class="sum-list">
+        <li><span class="k">Method</span><span class="v">${esc(order.deliveryMethod || "—")}</span></li>
+        ${order.deliveryLocation ? `<li><span class="k">Location</span><span class="v">${esc(order.deliveryLocation)}</span></li>` : ""}
+        ${order.orderNote ? `<li><span class="k">Note</span><span class="v">${esc(order.orderNote)}</span></li>` : ""}
+      </ul>
+    </div>
+
+    <div class="drawer-section">
+      <h4>Order info</h4>
+      <ul class="sum-list">
+        <li><span class="k">Code</span><span class="v mono">${esc(order.orderCode || "—")}</span></li>
+        <li><span class="k">Placed</span><span class="v">${formatDate(order.createdAt, true)}</span></li>
+        ${order.updatedAt ? `<li><span class="k">Updated</span><span class="v">${formatDate(order.updatedAt, true)}</span></li>` : ""}
+      </ul>
+    </div>
+  `;
+}
+
+function renderOrderFoot(order) {
+  return `
+    <button class="btn btn-outline" id="odWhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.47-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.53.15-.17.2-.3.3-.5.1-.19.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.87 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.42-.08-.12-.28-.2-.57-.34M12.05 21.79h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.89 9.89-9.89 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.89-9.88 9.89m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.17-1.24-6.16-3.48-8.41Z"/></svg>
+      WhatsApp
+    </button>
+    <button class="btn btn-outline" id="odCall">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.13.94.36 1.86.7 2.74a2 2 0 0 1-.46 2.11L8 9.8a16 16 0 0 0 6 6l1.25-1.24a2 2 0 0 1 2.11-.46c.88.34 1.8.57 2.74.7A2 2 0 0 1 22 16.9z"/></svg>
+      Call
+    </button>
+    <button class="btn btn-primary" data-close-order>Close</button>
+  `;
+}
+
+async function updateOrderStatus(orderId, status) {
+  const order = state.orders.find(o => o.id === orderId);
+  if (!order) return;
+
+  const previous = order.orderStatus;
+  order.orderStatus = status;
+
+  $$("[data-status-btn]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.statusBtn === status);
+  });
+
+  try {
+    await updateDoc(doc(fb.db, "orders", orderId), {
+      orderStatus: status,
+      updatedAt: serverTimestamp()
+    });
+    toast(`Order ${order.orderCode} → ${status}`, "ok");
+    updateNavBadge();
+
+    const row = $(`tr[data-id="${orderId}"]`);
+    if (row) {
+      const badgeCell = row.querySelector("td:nth-child(5)");
+      if (badgeCell) badgeCell.innerHTML = badge(status);
+    }
+  } catch (err) {
+    console.error(err);
+    order.orderStatus = previous;
+    $$("[data-status-btn]").forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.statusBtn === previous);
+    });
+    toast("Could not update the order status.", "err");
+  }
+}
+
+/* =========================================================================
+   PRODUCTS
+   ========================================================================= */
+function viewProducts() {
+  const list = state.products;
+
+  return `
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>${list.length} product${list.length === 1 ? "" : "s"}</h3>
+          <p>These appear on your customer menu.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="addProductBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Add product
+        </button>
+      </div>
+
+      ${list.length ? `
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Prices</th>
+                <th>Available</th>
+                <th>Featured</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(p => `
+                <tr class="no-hover">
+                  <td style="width:64px">
+                    <div style="width:52px;height:52px;border-radius:11px;overflow:hidden;background:#F1EFE6">
+                      <img src="${imgSrc(p)}" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+                    </div>
+                  </td>
+                  <td>
+                    <div class="cell-main">${esc(p.name)}</div>
+                    <div class="cell-sub" style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.description || "")}</div>
+                  </td>
+                  <td class="small">
+                    ${(p.sizes || []).map(s => `${esc(s.label)} <strong>${money(s.price)}</strong>`).join("<br>")}
+                  </td>
+                  <td>
+                    <label class="switch${p.available !== false ? " on" : ""}" data-toggle-avail="${esc(p.id)}">
+                      <input type="checkbox" ${p.available !== false ? "checked" : ""}>
+                    </label>
+                  </td>
+                  <td>
+                    <label class="switch${p.featured ? " on" : ""}" data-toggle-featured="${esc(p.id)}">
+                      <input type="checkbox" ${p.featured ? "checked" : ""}>
+                    </label>
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:6px;flex-wrap:nowrap">
+                      <button class="btn btn-outline btn-xs" data-edit-product="${esc(p.id)}">Edit</button>
+                      <button class="btn btn-danger btn-xs" data-delete-product="${esc(p.id)}">Delete</button>
+                    </div>
+                  </td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>` : emptyBlock("No products yet", "Add your first product to see it on the menu.")}
+    </div>
+  `;
+}
+
+function attachProducts() {
+  $("#addProductBtn")?.addEventListener("click", () => openProductModal(null));
+
+  $$("[data-edit-product]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const p = state.products.find(x => x.id === btn.dataset.editProduct);
+      openProductModal(p);
+    });
+  });
+
+  $$("[data-delete-product]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const p = state.products.find(x => x.id === btn.dataset.deleteProduct);
+      if (!p) return;
+      if (!confirm(`Delete "${p.name}"?\n\nTip: turn Available off instead to hide it while keeping order history intact.`)) return;
+      try {
+        await deleteDoc(doc(fb.db, "products", p.id));
+        state.products = state.products.filter(x => x.id !== p.id);
+        state.productsCache = true;
+        toast("Product deleted.", "ok");
+        render();
+      } catch (err) {
+        console.error(err);
+        toast("Could not delete the product.", "err");
+      }
+    });
+  });
+
+  $$("[data-toggle-avail]").forEach(el => {
+    el.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const id = el.dataset.toggleAvail;
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+      const next = p.available === false;
+      p.available = next;
+      el.classList.toggle("on", next);
+      try {
+        await updateDoc(doc(fb.db, "products", id), { available: next, updatedAt: serverTimestamp() });
+        toast(`${p.name} is now ${next ? "available" : "unavailable"}.`, "ok", 1800);
+      } catch (err) {
+        console.error(err);
+        p.available = !next;
+        el.classList.toggle("on", !next);
+        toast("Could not update availability.", "err");
+      }
+    });
+  });
+
+  $$("[data-toggle-featured]").forEach(el => {
+    el.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const id = el.dataset.toggleFeatured;
+      const p = state.products.find(x => x.id === id);
+      if (!p) return;
+      const next = !p.featured;
+      p.featured = next;
+      el.classList.toggle("on", next);
+      try {
+        await updateDoc(doc(fb.db, "products", id), { featured: next, updatedAt: serverTimestamp() });
+        toast(`${p.name} ${next ? "featured" : "no longer featured"}.`, "ok", 1800);
+      } catch (err) {
+        console.error(err);
+        p.featured = !next;
+        el.classList.toggle("on", !next);
+        toast("Could not update feature status.", "err");
+      }
+    });
+  });
+}
+
+/* =========================================================================
+   PRODUCT MODAL
+   ========================================================================= */
+const productModal = $("#productModal");
+const productForm = $("#productForm");
+let editingProduct = null;
+let editSizes = [];
+
+function openProductModal(product) {
+  editingProduct = product;
+  editSizes = product ? JSON.parse(JSON.stringify(product.sizes || [])) : [
+    { label: "Small", price: 30 },
+    { label: "Medium", price: 45 }
+  ];
+
+  $("#pmTitle").textContent = product ? "Edit product" : "Add product";
+  $("#pmSubtitle").textContent = product ? "Update the details below." : "Fill in the details below.";
+  $("#pmError").classList.remove("show");
+
+  $("#pfName").value = product?.name || "";
+  $("#pfDesc").value = product?.description || "";
+  $("#pfImage").value = product?.image || product?.imageUrl || "";
+  $("#pfAvailable").checked = product ? product.available !== false : true;
+  $("#pfFeatured").checked = !!product?.featured;
+
+  $("#uploadPreview").hidden = true;
+  $("#upThumb").innerHTML = "";
+  $("#upProgress").style.width = "0%";
+  $("#upPct").textContent = "0%";
+  $("#upStatus").textContent = "Ready";
+  $("#pfUpload").value = "";
+  $("#pfCompress").checked = true;
+  $("#pfKeepOriginal").checked = false;
+
+  const ok = isCloudinaryConfigured();
+  const zone = $("#uploadZone");
+  zone.classList.toggle("disabled", !ok);
+  const uzSub = $("#uzSub");
+  if (ok) {
+    uzSub.textContent = "Uploads to Cloudinary — any size, any quality";
+  } else {
+    uzSub.innerHTML = '<span style="color:var(--danger);font-weight:600">Not configured</span> — open Settings to set up Cloudinary';
+  }
+
+  syncSwitch("#pfAvailableSwitch", $("#pfAvailable").checked);
+  syncSwitch("#pfFeaturedSwitch", $("#pfFeatured").checked);
+
+  renderSizeRows();
+  productModal.classList.add("open");
+  productModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("locked");
+  setTimeout(() => $("#pfName").focus(), 60);
+}
+
+function closeProductModal() {
+  productModal.classList.remove("open");
+  productModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("locked");
+}
+
+$$("[data-close-product]").forEach(el => el.addEventListener("click", closeProductModal));
+
+function syncSwitch(sel, on) {
+  const el = $(sel);
+  if (el) el.classList.toggle("on", !!on);
+}
+
+$("#pfAvailable").addEventListener("change", (e) => syncSwitch("#pfAvailableSwitch", e.target.checked));
+$("#pfFeatured").addEventListener("change", (e) => syncSwitch("#pfFeaturedSwitch", e.target.checked));
+
+$$(".switch").forEach(el => {
+  el.addEventListener("click", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    const input = el.querySelector("input");
+    input.checked = !input.checked;
+    input.dispatchEvent(new Event("change"));
+  });
+});
+
+function renderSizeRows() {
+  const wrap = $("#pfSizes");
+  if (!wrap) return;
+  wrap.innerHTML = editSizes.map((s, i) => `
+    <div style="display:flex;gap:10px;margin-bottom:10px;align-items:center">
+      <input class="input" type="text" value="${esc(s.label)}" placeholder="Option" data-size-label="${i}" style="flex:1">
+      <input class="input" type="number" min="0" step="1" value="${Number(s.price)}" placeholder="R" data-size-price="${i}" style="width:100px">
+      <button class="btn btn-ghost btn-xs" type="button" data-size-remove="${i}" ${editSizes.length <= 1 ? "disabled" : ""}>×</button>
+    </div>`).join("");
+
+  wrap.querySelectorAll("[data-size-label]").forEach(inp => {
+    inp.addEventListener("input", e => { editSizes[+inp.dataset.sizeLabel].label = e.target.value; });
+  });
+  wrap.querySelectorAll("[data-size-price]").forEach(inp => {
+    inp.addEventListener("input", e => { editSizes[+inp.dataset.sizePrice].price = Number(e.target.value) || 0; });
+  });
+  wrap.querySelectorAll("[data-size-remove]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      editSizes.splice(+btn.dataset.sizeRemove, 1);
+      renderSizeRows();
+    });
+  });
+}
+
+$("#pfAddSize").addEventListener("click", () => {
+  editSizes.push({ label: "", price: 0 });
+  renderSizeRows();
+});
+
+const uploadZone = $("#uploadZone");
+
+["dragenter", "dragover"].forEach(ev => {
+  uploadZone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isCloudinaryConfigured()) return;
+    uploadZone.classList.add("drag-over");
+  });
+});
+
+["dragleave", "drop"].forEach(ev => {
+  uploadZone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadZone.classList.remove("drag-over");
+  });
+});
+
+uploadZone.addEventListener("drop", (e) => {
+  if (!isCloudinaryConfigured()) {
+    toast("Cloudinary not configured. Open Settings to set it up.", "err");
+    return;
+  }
+  const file = e.dataTransfer?.files?.[0];
+  if (file) handlePickedFile(file);
+});
+
+$("#pfUpload").addEventListener("change", (e) => {
+  if (!isCloudinaryConfigured()) {
+    toast("Cloudinary not configured. Open Settings to set it up.", "err");
+    return;
+  }
+  const file = e.target.files?.[0];
+  if (file) handlePickedFile(file);
+});
+
+async function handlePickedFile(file) {
+  if (!file.type.startsWith("image/")) {
+    toast("Please pick an image file.", "err");
+    return;
+  }
+
+  $("#uploadPreview").hidden = false;
+  $("#upName").textContent = file.name;
+  $("#upMeta").textContent = `Original: ${formatBytes(file.size)} · ${file.type}`;
+
+  const url = URL.createObjectURL(file);
+  $("#upThumb").innerHTML = `<img src="${url}" alt="">`;
+
+  if (file.size > IMAGE.maxBytesWarning) {
+    toast(`Large file (${formatBytes(file.size)}) — compression will help a lot.`, "info", 4200);
+  }
+
+  await uploadFile(file);
+}
+
+async function uploadFile(file) {
+  const keepOriginal = $("#pfKeepOriginal").checked;
+  const shouldCompress = $("#pfCompress").checked && !keepOriginal;
+
+  const progressEl = $("#upProgress");
+  const pctEl = $("#upPct");
+  const statusEl = $("#upStatus");
+
+  progressEl.style.width = "0%";
+  pctEl.textContent = "0%";
+  statusEl.textContent = shouldCompress ? "Compressing…" : "Preparing…";
+
+  let uploadBlob = file;
+  let mimeType = file.type || "image/jpeg";
+  let fileName = file.name;
+
+  if (shouldCompress) {
+    try {
+      const { blob } = await compressImage(file, IMAGE.maxDim, IMAGE.quality);
+      uploadBlob = blob;
+      mimeType = "image/jpeg";
+      fileName = fileName.replace(/\.[^.]+$/, "") + ".jpg";
+      statusEl.textContent = `Compressed ${formatBytes(file.size)} → ${formatBytes(blob.size)}`;
+      $("#upMeta").textContent = `Original: ${formatBytes(file.size)} · Optimised: ${formatBytes(blob.size)}`;
+    } catch (err) {
+      console.warn("Compression failed, uploading original:", err);
+      statusEl.textContent = "Compression failed — uploading original";
+      uploadBlob = file;
+      mimeType = file.type || "image/jpeg";
+    }
+  } else {
+    statusEl.textContent = `Uploading original (${formatBytes(file.size)})…`;
+  }
+
+  const uploadFileObj = new File([uploadBlob], fileName, { type: mimeType });
+
+  try {
+    statusEl.textContent = "Uploading to Cloudinary…";
+    const result = await uploadToCloudinary(uploadFileObj, (pct) => {
+      progressEl.style.width = pct + "%";
+      pctEl.textContent = pct + "%";
+      if (pct < 100) statusEl.textContent = "Uploading…";
+    });
+
+    progressEl.style.width = "100%";
+    pctEl.textContent = "100%";
+    statusEl.textContent = "Uploaded ✓";
+    $("#pfImage").value = result.secure_url;
+    toast("Image uploaded.", "ok");
+  } catch (err) {
+    console.error("Cloudinary upload failed:", err);
+    statusEl.textContent = "Upload failed";
+    progressEl.style.width = "0%";
+    pctEl.textContent = "0%";
+    toast(err.message || "Upload failed.", "err", 6000);
+  }
+}
+
+productForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errBox = $("#pmError");
+  errBox.classList.remove("show");
+
+  const name = $("#pfName").value.trim();
+  const image = $("#pfImage").value.trim();
+  const sizes = editSizes.filter(s => s.label.trim() && Number(s.price) > 0);
+
+  if (!name) { errBox.textContent = "Please enter a product name."; errBox.classList.add("show"); return; }
+  if (!image) { errBox.textContent = "Please upload an image or paste an image URL."; errBox.classList.add("show"); return; }
+  if (!sizes.length) { errBox.textContent = "Please add at least one option with a price."; errBox.classList.add("show"); return; }
+
+  const payload = {
+    name,
+    description: $("#pfDesc").value.trim(),
+    image,
+    imageUrl: /^https?:/i.test(image) ? image : (editingProduct?.imageUrl || ""),
+    sizes,
+    available: $("#pfAvailable").checked,
+    featured: $("#pfFeatured").checked,
+    order: editingProduct?.order ?? state.products.length + 1,
+    updatedAt: serverTimestamp()
+  };
+
+  const saveBtn = $("#pfSave");
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving…";
+
+  try {
+    if (editingProduct?.id) {
+      await updateDoc(doc(fb.db, "products", editingProduct.id), payload);
+      Object.assign(editingProduct, payload);
+      toast("Product updated.", "ok");
+    } else {
+      payload.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(fb.db, "products"), payload);
+      state.products.push({ id: ref.id, ...payload });
+      toast("Product added.", "ok");
+    }
+    state.productsCache = true;
+    closeProductModal();
+    render();
+  } catch (err) {
+    console.error(err);
+    errBox.textContent = "Could not save the product. Please try again.";
+    errBox.classList.add("show");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save product";
+  }
+});
+
+/* =========================================================================
+   ANNOUNCEMENTS
+   ========================================================================= */
+function viewAnnouncements() {
+  const list = state.announcements;
+
+  return `
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>${list.length} announcement${list.length === 1 ? "" : "s"}</h3>
+          <p>Active announcements appear as a banner at the top of the customer site.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="addAnnBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          New announcement
+        </button>
+      </div>
+
+      ${list.length ? `
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Style</th>
+                <th>Status</th>
+                <th>Expires</th>
+                <th>Created</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(a => {
+                const exp = toDate(a.expiresAt);
+                const expired = exp && exp.getTime() < Date.now();
+                const statusBadge = a.active === false
+                  ? '<span class="badge badge-unavailable">Inactive</span>'
+                  : expired
+                    ? '<span class="badge badge-Cancelled">Expired</span>'
+                    : '<span class="badge badge-available">Active</span>';
+                return `
+                  <tr class="no-hover">
+                    <td>
+                      <div class="cell-main">${esc(a.title || "—")}</div>
+                      <div class="cell-sub" style="max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.message || "")}</div>
+                    </td>
+                    <td><span class="badge badge-type-${esc(a.type || "info")}">${esc((a.type || "info").toUpperCase())}</span></td>
+                    <td>${statusBadge}</td>
+                    <td class="small muted">${a.expiresAt ? formatDate(a.expiresAt) : "Never"}</td>
+                    <td class="small muted">${timeAgo(a.createdAt)}</td>
+                    <td>
+                      <div style="display:flex;gap:6px;flex-wrap:nowrap">
+                        <button class="btn btn-outline btn-xs" data-edit-ann="${esc(a.id)}">Edit</button>
+                        <button class="btn btn-outline btn-xs" data-toggle-ann="${esc(a.id)}">${a.active === false ? "Activate" : "Deactivate"}</button>
+                        <button class="btn btn-danger btn-xs" data-delete-ann="${esc(a.id)}">Delete</button>
+                      </div>
+                    </td>
+                  </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>` : emptyBlock("No announcements yet", "Add one to show a banner on the customer site.")}
+    </div>
+
+    <div class="card mt-3 card-pad">
+      <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">How announcements work</h3>
+      <p class="small muted">Active announcements appear as a slim banner at the top of the customer site, above the hero. Customers can dismiss the banner — it stays dismissed until you change the message. Use the optional expiry date to auto-hide time-limited messages like weekend specials.</p>
+    </div>
+  `;
+}
+
+function attachAnnouncements() {
+  $("#addAnnBtn")?.addEventListener("click", () => openAnnModal(null));
+
+  $$("[data-edit-ann]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const a = state.announcements.find(x => x.id === btn.dataset.editAnn);
+      openAnnModal(a);
+    });
+  });
+
+  $$("[data-toggle-ann]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const a = state.announcements.find(x => x.id === btn.dataset.toggleAnn);
+      if (!a) return;
+      const next = a.active === false;
+      try {
+        await updateDoc(doc(fb.db, "announcements", a.id), { active: next, updatedAt: serverTimestamp() });
+        a.active = next;
+        state.announcementsCache = true;
+        toast(`Announcement ${next ? "activated" : "deactivated"}.`, "ok", 1800);
+        updateNavBadge();
+        render();
+      } catch (err) {
+        console.error(err);
+        toast("Could not update the announcement.", "err");
+      }
+    });
+  });
+
+  $$("[data-delete-ann]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const a = state.announcements.find(x => x.id === btn.dataset.deleteAnn);
+      if (!a) return;
+      if (!confirm(`Delete "${a.title}"?`)) return;
+      try {
+        await deleteDoc(doc(fb.db, "announcements", a.id));
+        state.announcements = state.announcements.filter(x => x.id !== a.id);
+        state.announcementsCache = true;
+        toast("Announcement deleted.", "ok");
+        updateNavBadge();
+        render();
+      } catch (err) {
+        console.error(err);
+        toast("Could not delete the announcement.", "err");
+      }
+    });
+  });
+}
+
+const annModal = $("#annModal");
+const annForm  = $("#annForm");
+const ANN_ICONS = {
+  info:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></svg>',
+  promo:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.6l-5.9 3.1 1.2-6.6L2.5 9.5l6.6-.9z"/></svg>',
+  urgent:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 17H2z"/><path d="M12 9v5M12 17.5v.01"/></svg>',
+  success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+};
+
+function openAnnModal(ann) {
+  state.editingAnn = ann;
+
+  $("#amTitle").textContent = ann ? "Edit announcement" : "New announcement";
+  $("#amSubtitle").textContent = ann ? "Update the details below." : "This will appear as a banner on the customer site.";
+  $("#amError").classList.remove("show");
+
+  $("#amTitleInput").value = ann?.title || "";
+  $("#amMessageInput").value = ann?.message || "";
+  $("#amCtaLabel").value = ann?.ctaLabel || "";
+  $("#amCtaHref").value = ann?.ctaHref || "";
+  $("#amActive").checked = ann ? ann.active !== false : true;
+
+  const expDate = toDate(ann?.expiresAt);
+  $("#amExpires").value = expDate ? expDate.toISOString().slice(0, 10) : "";
+
+  const type = ann?.type || "info";
+  $$('input[name="amType"]').forEach(r => { r.checked = r.value === type; });
+  $$(".type-opt").forEach(el => {
+    el.classList.toggle("active", el.querySelector("input").checked);
+  });
+
+  syncSwitch("#amActiveSwitch", $("#amActive").checked);
+  updateAnnPreview();
+  updateAnnCharCount();
+
+  annModal.classList.add("open");
+  annModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("locked");
+  setTimeout(() => $("#amTitleInput").focus(), 60);
+}
+
+function closeAnnModal() {
+  annModal.classList.remove("open");
+  annModal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("locked");
+  state.editingAnn = null;
+}
+
+$$("[data-close-ann]").forEach(el => el.addEventListener("click", closeAnnModal));
+
+function updateAnnPreview() {
+  const title = $("#amTitleInput").value.trim() || "Announcement title";
+  const msg = $("#amMessageInput").value.trim() || "Your message will appear here.";
+  const type = document.querySelector('input[name="amType"]:checked')?.value || "info";
+
+  const preview = $("#amPreview");
+  preview.className = "ann-preview " + type;
+  $("#amPreviewTitle").textContent = title;
+  $("#amPreviewMsg").textContent = msg;
+  $("#amPreviewIcon").innerHTML = ANN_ICONS[type] || ANN_ICONS.info;
+}
+
+function updateAnnCharCount() {
+  $("#amCharCount").textContent = $("#amMessageInput").value.length;
+}
+
+$("#amTitleInput").addEventListener("input", updateAnnPreview);
+$("#amMessageInput").addEventListener("input", () => {
+  updateAnnPreview();
+  updateAnnCharCount();
+});
+$$('input[name="amType"]').forEach(r => {
+  r.addEventListener("change", () => {
+    $$(".type-opt").forEach(el => {
+      el.classList.toggle("active", el.querySelector("input").checked);
+    });
+    updateAnnPreview();
+  });
+});
+$("#amActive").addEventListener("change", (e) => syncSwitch("#amActiveSwitch", e.target.checked));
+
+annForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errBox = $("#amError");
+  errBox.classList.remove("show");
+
+  const title = $("#amTitleInput").value.trim();
+  const message = $("#amMessageInput").value.trim();
+  const type = document.querySelector('input[name="amType"]:checked')?.value || "info";
+  const ctaLabel = $("#amCtaLabel").value.trim();
+  const ctaHref = $("#amCtaHref").value.trim();
+  const expiresStr = $("#amExpires").value;
+  const active = $("#amActive").checked;
+
+  if (!title) { errBox.textContent = "Please enter a title."; errBox.classList.add("show"); return; }
+  if (!message) { errBox.textContent = "Please enter a message."; errBox.classList.add("show"); return; }
+  if (ctaLabel && !ctaHref) { errBox.textContent = "Please add a link for the button, or clear the button label."; errBox.classList.add("show"); return; }
+  if (ctaHref && !ctaLabel) { errBox.textContent = "Please add a label for the button, or clear the link."; errBox.classList.add("show"); return; }
+
+  const payload = {
+    title,
+    message,
+    type,
+    ctaLabel: ctaLabel || "",
+    ctaHref: ctaHref || "",
+    active,
+    expiresAt: expiresStr ? new Date(expiresStr + "T23:59:59") : null,
+    updatedAt: serverTimestamp()
+  };
+
+  const saveBtn = $("#amSave");
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving…";
+
+  try {
+    if (state.editingAnn?.id) {
+      await updateDoc(doc(fb.db, "announcements", state.editingAnn.id), payload);
+      Object.assign(state.editingAnn, payload);
+      toast("Announcement updated.", "ok");
+    } else {
+      payload.createdAt = serverTimestamp();
+      const ref = await addDoc(collection(fb.db, "announcements"), payload);
+      state.announcements.unshift({ id: ref.id, ...payload });
+      toast("Announcement published.", "ok");
+    }
+    state.announcementsCache = true;
+    closeAnnModal();
+    updateNavBadge();
+    render();
+  } catch (err) {
+    console.error(err);
+    errBox.textContent = "Could not save the announcement. Please try again.";
+    errBox.classList.add("show");
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save announcement";
+  }
+});
+
+/* =========================================================================
+   CUSTOMERS
+   ========================================================================= */
+function viewCustomers() {
+  const ordersByUser = {};
+  state.orders.forEach(o => {
+    if (!o.customerId) return;
+    if (!ordersByUser[o.customerId]) ordersByUser[o.customerId] = { count: 0, total: 0, last: null };
+    ordersByUser[o.customerId].count++;
+    ordersByUser[o.customerId].total += Number(o.totalAmount || 0);
+    const d = toDate(o.createdAt);
+    if (d && (!ordersByUser[o.customerId].last || d > ordersByUser[o.customerId].last)) {
+      ordersByUser[o.customerId].last = d;
+    }
+  });
+
+  const term = state.searchTerm.toLowerCase().trim();
+  let list = state.customers.slice().sort((a, b) => {
+    const an = (a.name || a.email || "").toLowerCase();
+    const bn = (b.name || b.email || "").toLowerCase();
+    return an.localeCompare(bn);
+  });
+
+  if (term) {
+    list = list.filter(u => {
+      const hay = [u.name, u.email, u.phone].filter(Boolean).join(" ").toLowerCase();
+      return hay.includes(term);
+    });
+  }
+
+  return `
+    <div class="card">
+      <div class="filters-bar">
+        <div class="search-box" style="max-width:100%">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input type="text" id="custSearch" placeholder="Search name, email, phone…" value="${esc(state.searchTerm)}">
+        </div>
+        <span class="small muted">${list.length} customer${list.length === 1 ? "" : "s"}</span>
+      </div>
+
+      ${list.length ? `
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Orders</th>
+                <th>Total spent</th>
+                <th>Last order</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(u => {
+                const s = ordersByUser[u.id] || { count: 0, total: 0, last: null };
+                return `
+                  <tr class="no-hover">
+                    <td>
+                      <div class="cell-main">${esc(u.name || "—")}</div>
+                      <div class="cell-sub">${esc(u.email || "")}</div>
+                    </td>
+                    <td class="small">${esc(u.phone || "—")}</td>
+                    <td>${s.count}</td>
+                    <td><strong>${money(s.total)}</strong></td>
+                    <td class="muted small">${s.last ? timeAgo(s.last) : "—"}</td>
+                  </tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>` : emptyBlock("No customers yet", "Registered customers will appear here.")}
+    </div>
+  `;
+}
+
+function attachCustomers() {
+  const search = $("#custSearch");
+  if (!search) return;
+  let timer;
+  search.addEventListener("input", (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      state.searchTerm = e.target.value;
+      render();
+      const inp = $("#custSearch");
+      if (inp) { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }
+    }, 240);
+  });
+}
+
+/* =========================================================================
+   SETTINGS
+   ========================================================================= */
+function viewSettings() {
+  const uid = state.user?.uid || "—";
+  const cfg = getCloudinaryConfig();
+  const ready = isCloudinaryConfigured();
+
+  return `
+    <div class="settings-grid">
+
+      <div class="card card-pad" style="grid-column:1/-1;border-color:${ready ? 'var(--line-soft)' : 'rgba(176,52,26,.28)'}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+          <div>
+            <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">Image hosting — Cloudinary</h3>
+            <p class="small muted">Free image uploads. No credit card needed. Your images are stored on Cloudinary's servers and displayed on the customer site.</p>
+          </div>
+          <span class="cloud-status ${ready ? 'ok' : 'warn'}">
+            <span class="dot"></span>
+            ${ready ? "Connected" : "Not configured"}
+          </span>
+        </div>
+
+        ${ready ? "" : `
+          <ol class="setup-list">
+            <li>Go to <a href="https://cloudinary.com/users/register_free" target="_blank" rel="noopener">cloudinary.com/users/register_free</a> and create a free account (email + password, no card).</li>
+            <li>After signup, your <strong>Cloud Name</strong> appears on the dashboard — copy it below.</li>
+            <li>Go to <strong>Settings ⚙ → Upload → Upload presets → Add upload preset</strong>.</li>
+            <li>Set <strong>Signing Mode</strong> to <code>Unsigned</code>. Give it a name (e.g. <code>chef-thara</code>). Save.</li>
+            <li>Paste the preset name below and click Save.</li>
+          </ol>
+        `}
+
+        <div class="form-success" id="cloudSuccess">Cloudinary settings saved.</div>
+        <div class="form-error" id="cloudError"></div>
+
+        <div class="row-2 mt-3">
+          <div class="field" style="margin:0">
+            <label for="cfCloud">Cloud name</label>
+            <input class="input" type="text" id="cfCloud" placeholder="e.g. dxxxx1abcd" value="${esc(cfg.cloudName)}" autocomplete="off" spellcheck="false">
+          </div>
+          <div class="field" style="margin:0">
+            <label for="cfPreset">Upload preset (unsigned)</label>
+            <input class="input" type="text" id="cfPreset" placeholder="e.g. chef-thara" value="${esc(cfg.uploadPreset)}" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+
+        <div class="field mt-2" style="margin-bottom:0">
+          <label for="cfFolder">Folder <span class="opt">(optional)</span></label>
+          <input class="input" type="text" id="cfFolder" placeholder="e.g. products" value="${esc(cfg.folder)}" autocomplete="off" spellcheck="false">
+          <p class="hint">All uploads go into this folder on Cloudinary for tidiness. Leave blank for the root.</p>
+        </div>
+
+        <div class="row mt-3" style="gap:10px">
+          <button class="btn btn-primary" type="button" id="saveCloudBtn">Save Cloudinary settings</button>
+          ${ready ? `<button class="btn btn-outline" type="button" id="testCloudBtn">Test upload</button>` : ""}
+          ${ready ? `<button class="btn btn-ghost" type="button" id="clearCloudBtn">Clear</button>` : ""}
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">Your account</h3>
+        <p class="small muted mb-3">The account signed into this admin portal.</p>
+        <ul class="kv">
+          <li><span class="k">Name</span><span class="v">${esc(state.user?.displayName || "—")}</span></li>
+          <li><span class="k">Email</span><span class="v">${esc(state.user?.email || "—")}</span></li>
+          <li><span class="k">User ID</span><span class="v mono" style="font-family:ui-monospace,monospace;font-size:.78rem">${esc(uid)}</span></li>
+        </ul>
+        <div class="divider"></div>
+        <p class="small muted mb-2">To grant admin access to another account, add a document to the <strong>admins</strong> collection in Firebase with that account's User ID as the document ID. Leave all fields empty.</p>
+        <div class="uid-box">
+          <code>${esc(uid)}</code>
+          <button class="btn btn-outline btn-xs" id="copyUidBtn" type="button">Copy</button>
+        </div>
+      </div>
+
+      <div class="card card-pad">
+        <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">Business details</h3>
+        <p class="small muted mb-3">These are set in the website code.</p>
+        <ul class="kv">
+          <li><span class="k">Business</span><span class="v">${esc(BAKERY.name)}</span></li>
+          <li><span class="k">Tagline</span><span class="v">Every bite giggles</span></li>
+          <li><span class="k">WhatsApp</span><span class="v">081 099 4198</span></li>
+          <li><span class="k">Location</span><span class="v">Thohoyandou, South Africa</span></li>
+          <li><span class="k">Firebase project</span><span class="v mono" style="font-family:ui-monospace,monospace;font-size:.78rem">${esc(firebaseConfig.projectId)}</span></li>
+        </ul>
+      </div>
+
+      <div class="card card-pad" style="grid-column:1/-1">
+        <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">Image compression</h3>
+        <p class="small muted mb-3">Any image size and quality is accepted. Compression happens in your browser before upload — keeps the customer site fast.</p>
+        <ul class="kv">
+          <li><span class="k">Max dimension after compression</span><span class="v">${IMAGE.maxDim}px</span></li>
+          <li><span class="k">JPEG quality</span><span class="v">${Math.round(IMAGE.quality * 100)}%</span></li>
+          <li><span class="k">Large-file warning</span><span class="v">over ${formatBytes(IMAGE.maxBytesWarning)}</span></li>
+        </ul>
+      </div>
+
+      <div class="card card-pad" style="grid-column:1/-1">
+        <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">Order statuses</h3>
+        <p class="small muted mb-3">The lifecycle an order moves through. Change status by opening any order.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${ORDER_STATUSES.map(s => badge(s)).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function attachSettings() {
+  $("#saveCloudBtn")?.addEventListener("click", () => {
+    const cfg = {
+      cloudName: $("#cfCloud").value.trim(),
+      uploadPreset: $("#cfPreset").value.trim(),
+      folder: $("#cfFolder").value.trim()
+    };
+    const errBox = $("#cloudError");
+    const okBox = $("#cloudSuccess");
+    errBox.classList.remove("show");
+    okBox.classList.remove("show");
+
+    if (!cfg.cloudName || !cfg.uploadPreset) {
+      errBox.textContent = "Cloud name and upload preset are both required.";
+      errBox.classList.add("show");
+      return;
+    }
+    if (/[\/\s]/.test(cfg.cloudName)) {
+      errBox.textContent = "Cloud name shouldn't contain spaces or slashes. Copy it exactly from the Cloudinary dashboard.";
+      errBox.classList.add("show");
+      return;
+    }
+
+    saveCloudinaryConfig(cfg);
+    okBox.textContent = "Cloudinary settings saved.";
+    okBox.classList.add("show");
+    toast("Cloudinary settings saved.", "ok");
+    setTimeout(() => render(), 700);
+  });
+
+  $("#clearCloudBtn")?.addEventListener("click", () => {
+    if (!confirm("Clear Cloudinary settings? Images already uploaded will not be affected, but you won't be able to upload new ones.")) return;
+    localStorage.removeItem(CLOUDINARY_LS_KEY);
+    toast("Cloudinary settings cleared.", "info");
+    render();
+  });
+
+  $("#testCloudBtn")?.addEventListener("click", () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const { blob } = await compressImage(file, 800, 0.8);
+        const test = new File([blob], "test.jpg", { type: "image/jpeg" });
+        toast("Uploading test image…", "info", 2000);
+        const result = await uploadToCloudinary(test);
+        console.log("Test upload result:", result);
+        toast("Test upload succeeded! Check your Cloudinary Media Library.", "ok", 5000);
+      } catch (err) {
+        console.error(err);
+        toast("Test upload failed: " + err.message, "err", 6000);
+      }
+    };
+    input.click();
+  });
+
+  $("#copyUidBtn")?.addEventListener("click", async () => {
+    const uid = state.user?.uid || "";
+    try {
+      await navigator.clipboard.writeText(uid);
+      toast("User ID copied.", "ok", 1800);
+    } catch {
+      toast("Could not copy. Select and copy manually.", "err");
+    }
+  });
+}
+
+/* =========================================================================
+   EMPTY / ERROR BLOCKS
+   ========================================================================= */
+function emptyBlock(title, text) {
+  return `
+    <div class="empty">
+      <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 3.5h14v17l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8.5h6M9 12.5h6"/>
+        </svg>
+      </div>
+      <h3>${esc(title)}</h3>
+      <p>${esc(text)}</p>
+    </div>`;
+}
+
+function errorCard(title, text) {
+  return `
+    <div class="card card-pad center" style="padding:48px 24px">
+      <h3 style="font-family:var(--sans);font-size:1rem;font-weight:600;margin-bottom:6px">${esc(title)}</h3>
+      <p class="small muted">${esc(text)}</p>
+    </div>`;
+}
+
+/* =========================================================================
+   BOOT
+   ========================================================================= */
+if (window.innerWidth >= 900) {
+  $("#sidebar").classList.remove("open");
+}
+</script>
+
+</body>
+</html>
